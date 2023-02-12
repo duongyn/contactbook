@@ -1,0 +1,61 @@
+package com.my.contactbook.mapper;
+
+import com.my.contactbook.dto.ClassDTO;
+import com.my.contactbook.dto.UserDTO;
+import com.my.contactbook.entity.ClassEntity;
+import com.my.contactbook.entity.UserEntity;
+import com.my.contactbook.exception.UserException;
+import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
+@Component
+public class ClassMapper {
+    private static final Logger logger = LoggerFactory.getLogger(ClassMapper.class);
+
+    @Autowired
+    ModelMapper modelMapper;
+
+    public ClassDTO convertToDto(ClassEntity entity) {
+        try {
+            ClassDTO dto = modelMapper.map(entity, ClassDTO.class);
+            List<String> listStudentCode = new ArrayList<>();
+            for(UserEntity user: entity.getStudentList()){
+                listStudentCode.add(user.getUserCode());
+            }
+            dto.setListStudentCode(listStudentCode);
+            return dto;
+        } catch (Exception ex) {
+            logger.warn(ex.getMessage());
+            throw new UserException(UserException.ERR_CONVERT_DTO_ENTITY_FAIL);
+        }
+
+    }
+
+    public ClassEntity convertToEntity(ClassDTO dto) {
+        try {
+            ClassEntity entity = modelMapper.map(dto, ClassEntity.class);
+
+            return entity;
+        } catch (Exception ex) {
+            logger.warn(ex.getMessage());
+            throw new UserException(UserException.ERR_CONVERT_DTO_ENTITY_FAIL);
+        }
+    }
+
+    public List<ClassDTO> toListDto(List<ClassEntity> listEntity) {
+        List<ClassDTO> listDto = new ArrayList<>();
+
+        listEntity.forEach(e -> {
+            listDto.add(this.convertToDto(e));
+        });
+        return listDto;
+    }
+}
