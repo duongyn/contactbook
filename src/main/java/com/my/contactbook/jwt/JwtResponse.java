@@ -4,21 +4,24 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.List;
 
 
 @Getter
 @Setter
 public class JwtResponse implements Serializable {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private String username;
+    private String username;
 
-  private String jwtToken;
+    private List<String> roles;
 
-  public JwtResponse(String jwtToken) {
-    super();
-    this.jwtToken = jwtToken;
-  }
+    private String jwtToken;
+
+    public JwtResponse(String jwtToken) {
+        super();
+        this.jwtToken = jwtToken;
+    }
 
 
 }

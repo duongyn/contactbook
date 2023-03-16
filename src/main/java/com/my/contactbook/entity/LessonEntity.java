@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @ToString
-public class LessonEntity {
+public class LessonEntity extends BaseEntity{
     @Id
     @Column(name = "lesson_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,12 +33,15 @@ public class LessonEntity {
     @JoinColumn(name = "lesson_subject")
     private SubjectEntity lessonSubject;
 
-    @ManyToOne
-    @JoinColumn(name = "lesson_class")
-    private ClassEntity lessonClass;
+//    @ManyToOne
+//    @JoinColumn(name = "lesson_class")
+//    private ClassEntity lessonClass;
 
     @ManyToOne
     @JoinColumn(name = "lesson_teacher")
     private UserEntity lessonTeacher;
+
+    @OneToOne(mappedBy = "lesson")
+    private ScheduleEntity schedule;
 
 }

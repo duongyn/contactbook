@@ -7,15 +7,15 @@ import org.springframework.http.HttpStatus;
 @Getter
 @Setter
 public class CodeResponse {
-	private String code;
+    private String code;
 
-	private String message;
+    private String message;
 
-	private HttpStatus status;
+    private HttpStatus status;
 
-	public CodeResponse(String code, String message, HttpStatus status) {
-		this.code = code;
-		this.message = message;
-		this.status = status;
-	}
+    public CodeResponse(String code, String message, HttpStatus status) {
+        this.code = code;
+        this.message = message;
+        this.status = status;
+    }
 }

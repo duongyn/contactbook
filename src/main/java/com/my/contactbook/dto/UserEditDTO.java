@@ -16,4 +16,14 @@ public class UserEditDTO {
     private String editField;
 
     private String editValue;
+
+    private String userFName;
+
+    private String userLName;
+
+    private String userAddress;
+
+    private String gender;
+
+    private String dob;
 }

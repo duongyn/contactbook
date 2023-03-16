@@ -9,9 +9,12 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class SubjectDTO {
+public class ScheduleDTO {
+    private long lessonId;
 
-    private long subjectId;
-    private String subjectName;
-    private String subjectGrade;
+    private String scheduleFrom;
+
+    private String scheduleTo;
+
+    private String className;
 }

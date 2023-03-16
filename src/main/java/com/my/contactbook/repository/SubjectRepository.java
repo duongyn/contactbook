@@ -7,4 +7,7 @@ import java.util.Optional;
 
 public interface SubjectRepository extends JpaRepository<SubjectEntity, Long> {
     Optional<SubjectEntity> findBySubjectName(String subjectName);
+
+    Boolean existsBySubjectNameAndSubjectGrade(String subjectName, String subjectGrade);
+
 }

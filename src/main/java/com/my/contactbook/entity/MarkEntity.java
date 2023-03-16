@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @ToString
-public class MarkEntity {
+public class MarkEntity extends BaseEntity{
     @Id
     @Column(name = "mark_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,8 +33,5 @@ public class MarkEntity {
 
     @Column(name = "semester", length = 50)
     private String semester;
-
-    @Column(name = "created_by", length = 50)
-    private String createdBy;
 
 }

@@ -20,40 +20,40 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class JwtAuthenticationController {
-  @Autowired
-  private AuthenticationManager authenticationManager;
-  @Autowired
-  private JwtTokenUtil jwtTokenUtil;
-  @Autowired
-  private JwtUserDetailsService userDetailsService;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private JwtUserDetailsService userDetailsService;
 
-  @Autowired
-  private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-  @Autowired
-  private UserService userService;
+    @Autowired
+    private UserService userService;
 
-  @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-  public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest account) throws Exception {
-    authenticate(account.getUsername(), account.getPassword());
-    final UserDetails userDetails = userDetailsService.loadUserByUsername(account.getUsername());
-    final String token = jwtTokenUtil.generateToken(userDetails);
-    return new ResponseEntity<>(new JwtResponse(token), HttpStatus.OK);
-  }
-
-  private void authenticate(String username, String password) throws Exception {
-    try {
-      authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-      UserEntity user = userService.findByUsername(username);
-      if (user.getStatus() == UserEntity.EStatus.DISABLE) {
-	throw new DisabledException("USER_DISABLED");
-      }
-    } catch (DisabledException e) {
-      throw new Exception("USER_DISABLED", e);
-    } catch (BadCredentialsException e) {
-      throw new Exception("INVALID_CREDENTIALS", e);
+    @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
+    public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest account) throws Exception {
+        authenticate(account.getUsername(), account.getPassword());
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(account.getUsername());
+        final String token = jwtTokenUtil.generateToken(userDetails);
+        return new ResponseEntity<>(new JwtResponse(token), HttpStatus.OK);
     }
-  }
+
+    private void authenticate(String username, String password) throws Exception {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            UserEntity user = userService.findByUsername(username);
+            if (user.getStatus() == UserEntity.EStatus.DISABLE || user.isDeleted()) {
+                throw new DisabledException("USER_DISABLED");
+            }
+        } catch (DisabledException e) {
+            throw new Exception("USER_DISABLED", e);
+        } catch (BadCredentialsException e) {
+            throw new Exception("INVALID_CREDENTIALS", e);
+        }
+    }
 
 
 }

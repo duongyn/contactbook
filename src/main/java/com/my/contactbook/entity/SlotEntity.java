@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class SlotEntity {
+public class SlotEntity extends BaseEntity{
 
     @Id
     @Column(name = "slot_id")

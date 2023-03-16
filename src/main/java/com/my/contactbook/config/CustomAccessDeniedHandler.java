@@ -18,22 +18,22 @@ import java.util.Map;
 @Component
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
-	private static final Logger logger = LoggerFactory.getLogger(CustomAccessDeniedHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(CustomAccessDeniedHandler.class);
 
-	@Override
-	public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+    @Override
+    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
 
-		logger.error("Error: {}", accessDeniedException.getMessage());
-		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-		response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        logger.error("Error: {}", accessDeniedException.getMessage());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 
-		final Map<String, Object> body = new HashMap<>();
-		body.put("status", HttpServletResponse.SC_FORBIDDEN);
-		body.put("error", "Access Denied");
-		body.put("message", accessDeniedException.getMessage());
-		body.put("path", request.getServletPath());
+        final Map<String, Object> body = new HashMap<>();
+        body.put("status", HttpServletResponse.SC_FORBIDDEN);
+        body.put("error", "Access Denied");
+        body.put("message", accessDeniedException.getMessage());
+        body.put("path", request.getServletPath());
 
-		final ObjectMapper mapper = new ObjectMapper();
-		mapper.writeValue(response.getOutputStream(), body);
-	}
+        final ObjectMapper mapper = new ObjectMapper();
+        mapper.writeValue(response.getOutputStream(), body);
+    }
 }

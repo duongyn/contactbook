@@ -1,7 +1,9 @@
 package com.my.contactbook.mapper;
 
 import com.my.contactbook.dto.ClassDTO;
+import com.my.contactbook.dto.MarkDTO;
 import com.my.contactbook.entity.ClassEntity;
+import com.my.contactbook.entity.MarkEntity;
 import com.my.contactbook.entity.UserEntity;
 import com.my.contactbook.exception.UserException;
 import org.modelmapper.ModelMapper;
@@ -14,22 +16,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class ClassMapper {
-    private static final Logger logger = LoggerFactory.getLogger(ClassMapper.class);
+public class MarkMapper {
+    private static final Logger logger = LoggerFactory.getLogger(MarkMapper.class);
 
     @Autowired
     ModelMapper modelMapper;
 
-    public ClassDTO convertToDto(ClassEntity entity) {
+    public MarkDTO convertToDto(MarkEntity entity) {
         try {
-            ClassDTO dto = modelMapper.map(entity, ClassDTO.class);
-            List<String> listStudentCode = new ArrayList<>();
-            if(entity.getStudentList() != null){
-                for (UserEntity user : entity.getStudentList()) {
-                    listStudentCode.add(user.getUserCode());
-                }
-                dto.setListStudentCode(listStudentCode);
-            }
+            MarkDTO dto = modelMapper.map(entity, MarkDTO.class);
+            dto.setStudentCode(entity.getUserId().getUserCode());
+            dto.setTeacherCode(entity.getCreatedBy());
+            dto.setSubjectId(entity.getSubjectId().getSubjectId());
             return dto;
         } catch (Exception ex) {
             logger.warn(ex.getMessage());
@@ -38,9 +36,9 @@ public class ClassMapper {
 
     }
 
-    public ClassEntity convertToEntity(ClassDTO dto) {
+    public MarkEntity convertToEntity(MarkDTO dto) {
         try {
-            ClassEntity entity = modelMapper.map(dto, ClassEntity.class);
+            MarkEntity entity = modelMapper.map(dto, MarkEntity.class);
 
             return entity;
         } catch (Exception ex) {
@@ -49,8 +47,8 @@ public class ClassMapper {
         }
     }
 
-    public List<ClassDTO> toListDto(List<ClassEntity> listEntity) {
-        List<ClassDTO> listDto = new ArrayList<>();
+    public List<MarkDTO> toListDto(List<MarkEntity> listEntity) {
+        List<MarkDTO> listDto = new ArrayList<>();
 
         listEntity.forEach(e -> {
             listDto.add(this.convertToDto(e));

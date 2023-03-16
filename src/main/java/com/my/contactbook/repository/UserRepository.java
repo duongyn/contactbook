@@ -13,8 +13,15 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
     @Query(value = "select username\n" +
             " from user_db\n" +
             " where username like :username% \n" +
-            " order by user_code DESC\n" +
+            " order by username DESC\n" +
             " LIMIT 1",
             nativeQuery = true)
     String findLastUsername(@Param("username") String username);
+
+    @Query(value = "select EXISTS(\n" +
+            " select * from user_db\n" +
+            " where user_code = :userCode and fname = :firstName and lname = :lastName \n" +
+            " )",
+            nativeQuery = true)
+    int checkValidUser(@Param("userCode") String userCode, @Param("firstName") String firstName, @Param("lastName") String lastName);
 }

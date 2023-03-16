@@ -1,8 +1,7 @@
 package com.my.contactbook.mapper;
 
-import com.my.contactbook.dto.ClassDTO;
-import com.my.contactbook.entity.ClassEntity;
-import com.my.contactbook.entity.UserEntity;
+import com.my.contactbook.dto.LessonDTO;
+import com.my.contactbook.entity.LessonEntity;
 import com.my.contactbook.exception.UserException;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -14,22 +13,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class ClassMapper {
-    private static final Logger logger = LoggerFactory.getLogger(ClassMapper.class);
+public class LessonMapper {
+    private static final Logger logger = LoggerFactory.getLogger(LessonMapper.class);
 
     @Autowired
     ModelMapper modelMapper;
 
-    public ClassDTO convertToDto(ClassEntity entity) {
+    public LessonDTO convertToDto(LessonEntity entity) {
         try {
-            ClassDTO dto = modelMapper.map(entity, ClassDTO.class);
-            List<String> listStudentCode = new ArrayList<>();
-            if(entity.getStudentList() != null){
-                for (UserEntity user : entity.getStudentList()) {
-                    listStudentCode.add(user.getUserCode());
-                }
-                dto.setListStudentCode(listStudentCode);
-            }
+            LessonDTO dto = modelMapper.map(entity, LessonDTO.class);
+            dto.setLessonSubjectName(entity.getLessonSubject().getSubjectName());
+            dto.setLessonSubjectGrade(entity.getLessonSubject().getSubjectGrade());
+            dto.setLessonTeacherCode(entity.getLessonTeacher().getUserCode());
+            dto.setLessonSlotId(entity.getLessonSlot().getSlotId());
             return dto;
         } catch (Exception ex) {
             logger.warn(ex.getMessage());
@@ -38,9 +34,9 @@ public class ClassMapper {
 
     }
 
-    public ClassEntity convertToEntity(ClassDTO dto) {
+    public LessonEntity convertToEntity(LessonDTO dto) {
         try {
-            ClassEntity entity = modelMapper.map(dto, ClassEntity.class);
+            LessonEntity entity = modelMapper.map(dto, LessonEntity.class);
 
             return entity;
         } catch (Exception ex) {
@@ -49,8 +45,8 @@ public class ClassMapper {
         }
     }
 
-    public List<ClassDTO> toListDto(List<ClassEntity> listEntity) {
-        List<ClassDTO> listDto = new ArrayList<>();
+    public List<LessonDTO> toListDto(List<LessonEntity> listEntity) {
+        List<LessonDTO> listDto = new ArrayList<>();
 
         listEntity.forEach(e -> {
             listDto.add(this.convertToDto(e));

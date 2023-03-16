@@ -12,6 +12,8 @@ import java.util.List;
 @Setter
 @ToString
 public class ClassDTO {
+
+    private long id;
     private String className;
 
     private String classGrade;

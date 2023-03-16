@@ -10,16 +10,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Table(name = "user_db", uniqueConstraints = { @UniqueConstraint(columnNames = "username") })
+@Table(name = "user_db", uniqueConstraints = {@UniqueConstraint(columnNames = "username")})
 @Getter
 @Setter
 @ToString
-public class UserEntity {
-
-//    @Id
-//    @Column(name = "user_id")
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private long userId;
+public class UserEntity extends BaseEntity
+{
 
     @Id
     @Column(name = "user_code")
@@ -59,19 +55,15 @@ public class UserEntity {
     @OneToMany(mappedBy = "userId")
     private List<MarkEntity> userMarks;
 
-    @ManyToOne
-    @JoinColumn(name = "teaching_subject")
-    private SubjectEntity teacherSubjectId;
+    @ManyToMany(mappedBy = "teachers")
+    private List<SubjectEntity> teacherSubjects;
 
     @ManyToOne
     @JoinColumn(name = "student_class")
     private ClassEntity studentClass;
 
-    @OneToMany(mappedBy = "formTeacher")
-    private List<ClassEntity> formTeacherClass;
-
-    @OneToMany(mappedBy = "lessonTeacher")
-    private List<LessonEntity> teachingLesson;
+    @OneToOne(mappedBy = "formTeacher")
+    private ClassEntity formTeacherClass;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 50)

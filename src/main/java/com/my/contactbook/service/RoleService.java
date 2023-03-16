@@ -15,21 +15,27 @@ public class RoleService {
     @Autowired
     private RoleRepository roleRepository;
 
-    public RoleEntity setRoleData(String name, String prefix){
+    public RoleEntity setRoleData(String name, String prefix) {
         RoleEntity role = new RoleEntity();
         role.setRoleName(name);
         role.setRolePrefix(prefix);
         return role;
     }
 
-    public void createRoles(){
-        RoleEntity adminRole = setRoleData("ADMIN", "AD");
-        RoleEntity formRole = setRoleData("FORM_TEACHER","GV");
-        RoleEntity subjRole = setRoleData("SUBJECT_TEACHER", "GV");
-        RoleEntity studentRole = setRoleData("STUDENT", "HS");
-        List<RoleEntity> roles = new ArrayList<>();
-        roles.add(adminRole); roles.add(formRole); roles.add(subjRole); roles.add(studentRole);
+    public void createRoles() {
+        List<RoleEntity> rolesExist = roleRepository.findAll();
+        if(rolesExist.isEmpty()){
+            RoleEntity adminRole = setRoleData("ADMIN", "AD");
+            RoleEntity formRole = setRoleData("MANAGER", "QL");
+            RoleEntity subjRole = setRoleData("TEACHER", "GV");
+            RoleEntity studentRole = setRoleData("STUDENT", "HS");
+            List<RoleEntity> roles = new ArrayList<>();
+            roles.add(adminRole);
+            roles.add(formRole);
+            roles.add(subjRole);
+            roles.add(studentRole);
 
-        roleRepository.saveAll(roles);
+            roleRepository.saveAll(roles);
+        }
     }
 }

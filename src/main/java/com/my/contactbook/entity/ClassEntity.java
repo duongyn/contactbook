@@ -8,11 +8,11 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "class_db", uniqueConstraints = { @UniqueConstraint(columnNames = "class_name") })
+@Table(name = "class_db", uniqueConstraints = {@UniqueConstraint(columnNames = "class_name")})
 @Getter
 @Setter
 @ToString
-public class ClassEntity {
+public class ClassEntity extends BaseEntity{
 
     @Id
     @Column(name = "class_id")
@@ -25,13 +25,16 @@ public class ClassEntity {
     @OneToMany(mappedBy = "studentClass")
     private List<UserEntity> studentList;
 
-    @ManyToOne
-    @JoinColumn(name = "form_teacher", nullable = false)
+    @OneToOne
+    @JoinColumn(name = "form_teacher")
     private UserEntity formTeacher;
 
     private long classGrade;
 
-    @OneToMany(mappedBy = "lessonClass")
-    private List<LessonEntity> lessons;
+    @OneToOne(mappedBy = "classId")
+    private ScheduleEntity classSchedule;
+
+//    @OneToMany(mappedBy = "lessonClass")
+//    private List<LessonEntity> lessons;
 
 }

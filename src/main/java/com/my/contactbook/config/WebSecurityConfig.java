@@ -22,50 +22,54 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-  @Autowired
-  private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    @Autowired
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-  @Autowired
-  private UserDetailsService jwtUserDetailsService;
+    @Autowired
+    private UserDetailsService jwtUserDetailsService;
 
-  @Autowired
-  private JwtRequestFilter jwtRequestFilter;
+    @Autowired
+    private JwtRequestFilter jwtRequestFilter;
 
-  @Autowired
-  private CustomAccessDeniedHandler customAccessDeniedHandler;
+    @Autowired
+    private CustomAccessDeniedHandler customAccessDeniedHandler;
 
-  @Override
-  public void configure(AuthenticationManagerBuilder auth) throws Exception {
-    // Configure AuthenticationManager so that it knows from where to load user for matching credentials
-    // Use BCryptPasswordEncoder
-    auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
-  }
+    @Override
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        // Configure AuthenticationManager so that it knows from where to load user for matching credentials
+        // Use BCryptPasswordEncoder
+        auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
+    }
 
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-  @Bean
-  @Override
-  public AuthenticationManager authenticationManagerBean() throws Exception {
-    return super.authenticationManagerBean();
-  }
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 
-  @Override
-  protected void configure(HttpSecurity httpSecurity) throws Exception {
-    httpSecurity.authorizeRequests().antMatchers("/authenticate", "/authenticate/").permitAll();
+    @Override
+    protected void configure(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity.authorizeRequests().antMatchers("/authenticate", "/authenticate/").permitAll();
 
-    httpSecurity.cors().and().csrf().disable().exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
-        .and().exceptionHandling().accessDeniedHandler(customAccessDeniedHandler).and().sessionManagement()
-        .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests().antMatchers("/users/**")
-        .permitAll().antMatchers("/subjects/**")
-            .permitAll().antMatchers("/classes/**")
-            .permitAll().anyRequest().authenticated();
+        httpSecurity.cors().and().csrf().disable().exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .and().exceptionHandling().accessDeniedHandler(customAccessDeniedHandler).and().sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
+                .antMatchers("/users/**").permitAll()
+                .antMatchers("/subjects/**").permitAll()
+                .antMatchers("/classes/**").permitAll()
+                .antMatchers("/lessons/**").permitAll()
+                .antMatchers("/marks/**").permitAll()
+                .antMatchers("/schedules/**").permitAll()
+                .anyRequest().authenticated();
 
 
-    // Add a filter to validate the tokens with every request
-    httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-  }
+        // Add a filter to validate the tokens with every request
+        httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+    }
 
 }

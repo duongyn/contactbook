@@ -17,32 +17,31 @@ import java.util.List;
 @ToString
 public class UserDTO {
 
-	private String userCode;
+    private String userCode;
 
-	private String status;
+    private String status;
 
-	@NotBlank(message = "Please enter First Name")
-	@Length(min = 1, max = 50, message = "The name length should be 1 - 50 characters")
-	@Pattern(regexp = "^[A-Za-z\\s]+$", message = "Name should not contain numbers and special characters")
-	private String firstName;
+    @NotBlank(message = "Please enter First Name")
+    @Length(min = 1, max = 50, message = "The name length should be 1 - 50 characters")
+    @Pattern(regexp = "^[A-Za-z\\s]+$", message = "Name should not contain numbers and special characters")
+    private String firstName;
 
-	@NotBlank(message = "Please enter Last Name")
-	@Length(min = 1, max = 50, message = "The name length should be 1 - 50 characters")
-	@Pattern(regexp = "^[A-Za-z\\s]+$", message = "Name  should not contain numbers and special characters")
-	private String lastName;
+    @NotBlank(message = "Please enter Last Name")
+    @Length(min = 1, max = 50, message = "The name length should be 1 - 50 characters")
+    @Pattern(regexp = "^[A-Za-z\\s]+$", message = "Name  should not contain numbers and special characters")
+    private String lastName;
 
-	private String username;
+    private String username;
 
-	@NotBlank(message = "Date of birth can not be empty")
-	private String dob;
+    @NotBlank(message = "Date of birth can not be empty")
+    private String dob;
 
-	@NotBlank(message = "Joined date can not be empty")
-	private String joinedDate;
+    private String joinedDate;
 
-	private String gender;
+    private String gender;
 
-	private List<String> roleName;
+    private List<String> roleName;
 
-	private String address;
+    private String address;
 
 }

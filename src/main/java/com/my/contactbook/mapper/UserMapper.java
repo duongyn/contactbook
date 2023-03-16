@@ -17,80 +17,89 @@ import java.util.List;
 
 @Component
 public class UserMapper {
-	private static final Logger logger = LoggerFactory.getLogger(UserMapper.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserMapper.class);
 
-	@Autowired
-	ModelMapper modelMapper;
+    @Autowired
+    ModelMapper modelMapper;
 
-	public UserDTO convertToDto(UserEntity user) {
-		try {
-			UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+    public UserDTO convertToDto(UserEntity user) {
+        try {
+            UserDTO userDTO = modelMapper.map(user, UserDTO.class);
 
-			DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-			userDTO.setDob(user.getDob().format(formatterDate));
-			userDTO.setJoinedDate(user.getJoinedDate().format(formatterDate));
+            DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            userDTO.setDob(user.getDob().format(formatterDate));
+            if(user.getJoinedDate() != null ){
+                userDTO.setJoinedDate(user.getJoinedDate().format(formatterDate));
+            }
+            List<String> roles = new ArrayList<>();
+            roles.add(user.getRoles().get(0).getRoleName());
+            userDTO.setRoleName(roles);
 
-			return userDTO;
-		} catch (Exception ex) {
-			logger.warn(ex.getMessage());
-			throw new UserException(UserException.ERR_CONVERT_DTO_ENTITY_FAIL);
-		}
+            return userDTO;
+        } catch (Exception ex) {
+            logger.warn(ex.getMessage());
+            throw new UserException(UserException.ERR_CONVERT_DTO_ENTITY_FAIL);
+        }
 
-	}
+    }
 
-	public UserEntity convertToEntity(UserDTO userDTO) {
-		try {
-			UserEntity user = modelMapper.map(userDTO, UserEntity.class);
-			DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-			user.setDob(LocalDate.parse(userDTO.getDob(), formatterDate));
-			user.setJoinedDate(LocalDate.parse(userDTO.getJoinedDate(), formatterDate));
-			user.setFirstName(user.getFirstName().trim());
-			user.setLastName(user.getLastName().trim());
-			return user;
-		} catch (Exception ex) {
-			logger.warn(ex.getMessage());
-			throw new UserException(UserException.ERR_CONVERT_DTO_ENTITY_FAIL);
-		}
-	}
+    public UserEntity convertToEntity(UserDTO userDTO) {
+        try {
+            UserEntity user = modelMapper.map(userDTO, UserEntity.class);
+            DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            user.setDob(LocalDate.parse(userDTO.getDob(), formatterDate));
+            if(userDTO.getJoinedDate() != null){
+                user.setJoinedDate(LocalDate.parse(userDTO.getJoinedDate(), formatterDate));
+            }
+            user.setFirstName(user.getFirstName().trim());
+            user.setLastName(user.getLastName().trim());
+            return user;
+        } catch (Exception ex) {
+            logger.warn(ex.getMessage());
+            throw new UserException(UserException.ERR_CONVERT_DTO_ENTITY_FAIL);
+        }
+    }
 
-	public List<UserDTO> toListDto(List<UserEntity> listEntity) {
-		List<UserDTO> listDto = new ArrayList<>();
+    public List<UserDTO> toListDto(List<UserEntity> listEntity) {
+        List<UserDTO> listDto = new ArrayList<>();
 
-		listEntity.forEach(e -> {
-			listDto.add(this.convertToDto(e));
-		});
-		return listDto;
-	}
+        listEntity.forEach(e -> {
+            listDto.add(this.convertToDto(e));
+        });
+        return listDto;
+    }
 
-	public UserEditDTO convertEditToDto(UserEntity user) {
-		try {
-			UserEditDTO userDTO = modelMapper.map(user, UserEditDTO.class);
+    public UserEditDTO convertEditToDto(UserEntity user) {
+        try {
+            UserEditDTO userDTO = modelMapper.map(user, UserEditDTO.class);
 
-			return userDTO;
-		} catch (Exception ex) {
-			logger.warn(ex.getMessage());
-			throw new UserException(UserException.ERR_CONVERT_DTO_ENTITY_FAIL);
-		}
+            return userDTO;
+        } catch (Exception ex) {
+            logger.warn(ex.getMessage());
+            throw new UserException(UserException.ERR_CONVERT_DTO_ENTITY_FAIL);
+        }
 
-	}
-	public UserEntity convertEditToEntity(UserEditDTO userDTO) {
-		try {
-			UserEntity user = modelMapper.map(userDTO, UserEntity.class);
-			user.setFirstName(user.getFirstName().trim());
-			user.setLastName(user.getLastName().trim());
-			return user;
-		} catch (Exception ex) {
-			logger.warn(ex.getMessage());
-			throw new UserException(UserException.ERR_CONVERT_DTO_ENTITY_FAIL);
-		}
-	}
-	public List<UserEditDTO> toListEditDto(List<UserEntity> listEntity) {
-		List<UserEditDTO> listDto = new ArrayList<>();
+    }
 
-		listEntity.forEach(e -> {
-			listDto.add(this.convertEditToDto(e));
-		});
-		return listDto;
-	}
+    public UserEntity convertEditToEntity(UserEditDTO userDTO) {
+        try {
+            UserEntity user = modelMapper.map(userDTO, UserEntity.class);
+            user.setFirstName(user.getFirstName().trim());
+            user.setLastName(user.getLastName().trim());
+            return user;
+        } catch (Exception ex) {
+            logger.warn(ex.getMessage());
+            throw new UserException(UserException.ERR_CONVERT_DTO_ENTITY_FAIL);
+        }
+    }
+
+    public List<UserEditDTO> toListEditDto(List<UserEntity> listEntity) {
+        List<UserEditDTO> listDto = new ArrayList<>();
+
+        listEntity.forEach(e -> {
+            listDto.add(this.convertEditToDto(e));
+        });
+        return listDto;
+    }
 
 }
