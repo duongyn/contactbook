@@ -45,6 +45,9 @@ public class SubjectService {
     public SubjectDTO editSubject(SubjectDTO dto) {
         SubjectEntity entity = subjectRepository.findById(dto.getSubjectId())
                 .orElseThrow(() -> new RuntimeException("Error: Not found subject"));
+        if(subjectRepository.existsBySubjectNameAndSubjectGrade(dto.getSubjectName(), dto.getSubjectGrade())){
+            throw new RuntimeException("Error: The subject exists in database");
+        }
         entity.setSubjectName(dto.getSubjectName());
         try {
             int grade = Integer.parseInt(dto.getSubjectGrade());

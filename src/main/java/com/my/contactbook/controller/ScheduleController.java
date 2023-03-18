@@ -23,9 +23,23 @@ public class ScheduleController {
         return new ResponseEntity<>(schedule, HttpStatus.CREATED);
     }
 
+    @PutMapping("")
+        //@PreAuthorize("hasAuthority('ADMIN')")
+    ResponseEntity<ScheduleDTO> updateSchedule(@Valid @RequestBody ScheduleDTO dto) {
+        ScheduleDTO schedule = scheduleService.updateSchedule(dto);
+        return new ResponseEntity<>(schedule, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/delete/{scheduleId}")
+        //@PreAuthorize("hasAuthority('ADMIN')")
+    ResponseEntity deleteSchedule(@PathVariable("scheduleId") long scheduleId) {
+        scheduleService.deleteSchedule(scheduleId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
         //@PreAuthorize("hasAuthority('ADMIN')")
-    ResponseEntity<ScheduleDTO> findClass(@PathVariable("id") long scheduleId) {
+    ResponseEntity<ScheduleDTO> findSchedule(@PathVariable("id") long scheduleId) {
         ScheduleDTO dto = scheduleService.findSchedule(scheduleId);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }

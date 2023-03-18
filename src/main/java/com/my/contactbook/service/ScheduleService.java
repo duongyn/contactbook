@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @Transactional
 public class ScheduleService {
@@ -44,8 +46,29 @@ public class ScheduleService {
         ClassEntity classEntity = classRepository.findByClassName(dto.getClassName())
                 .orElseThrow(() -> new RuntimeException("Not found class with id: " + dto.getClassName()));
         schedule.setClassId(classEntity);
+        schedule.setScheduleTime(LocalDateTime.parse(dto.getScheduleTime()));
 
         return scheduleMapper.convertToDto(scheduleRepository.save(schedule));
+    }
+
+    public ScheduleDTO updateSchedule(ScheduleDTO dto) {
+        ScheduleEntity schedule = scheduleRepository.findById(dto.getScheduleId())
+                .orElseThrow(() -> new RuntimeException("Error: Not found schedule"));
+        LessonEntity lesson = lessonRepository.findById(dto.getLessonId())
+                .orElseThrow(() -> new RuntimeException("Not found lesson with id: " + dto.getLessonId()));
+        schedule.setLesson(lesson);
+        ClassEntity classEntity = classRepository.findByClassName(dto.getClassName())
+                .orElseThrow(() -> new RuntimeException("Not found class with id: " + dto.getClassName()));
+        schedule.setClassId(classEntity);
+        schedule.setScheduleTime(LocalDateTime.parse(dto.getScheduleTime()));
+        return scheduleMapper.convertToDto(scheduleRepository.save(schedule));
+    }
+
+    public void deleteSchedule(long scheduleId) {
+        ScheduleEntity schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new RuntimeException("Error: Not found schedule"));
+        schedule.setDeleted(true);
+        scheduleRepository.save(schedule);
     }
 
     public ScheduleDTO findSchedule(long scheduleId) {

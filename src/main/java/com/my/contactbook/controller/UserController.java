@@ -39,7 +39,7 @@ public class UserController {
     }
 
     @PostMapping("")
-        //@PreAuthorize("hasAuthority('ADMIN')")
+        @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserDTO user) {
         UserDTO dto = userService.createUser(user);
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
@@ -53,7 +53,7 @@ public class UserController {
     }
 
     @PutMapping("/delete/{userCode}")
-        //@PreAuthorize("hasAuthority('ADMIN')")
+        @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     ResponseEntity deleteUser(@PathVariable("userCode") String userCode) {
         userService.deleteUser(userCode);
         return new ResponseEntity<>(HttpStatus.OK);

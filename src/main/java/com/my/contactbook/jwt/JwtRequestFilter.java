@@ -1,8 +1,10 @@
 package com.my.contactbook.jwt;
 
+import com.my.contactbook.exception.JwtExpiredHandleException;
 import com.my.contactbook.service.JwtUserDetailsService;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -45,7 +47,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 throw e;
             } catch (ExpiredJwtException e) {
                 logger.warn("JWT Token has expired");
-                throw e;
+                throw new JwtExpiredHandleException("JWT Token has expired");
             }
         } else {
             logger.warn("JWT Token does not begin with Bearer String");

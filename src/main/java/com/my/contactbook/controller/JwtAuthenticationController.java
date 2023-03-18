@@ -46,10 +46,10 @@ public class JwtAuthenticationController {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
             UserEntity user = userService.findByUsername(username);
             if (user.getStatus() == UserEntity.EStatus.DISABLE || user.isDeleted()) {
-                throw new DisabledException("USER_DISABLED");
+                throw new DisabledException("Cannot Login. User is disable");
             }
         } catch (DisabledException e) {
-            throw new Exception("USER_DISABLED", e);
+            throw new Exception("Cannot Login. User is disable", e);
         } catch (BadCredentialsException e) {
             throw new Exception("INVALID_CREDENTIALS", e);
         }

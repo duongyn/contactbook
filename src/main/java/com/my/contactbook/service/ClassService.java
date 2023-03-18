@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,9 +77,6 @@ public class ClassService {
 
     public ClassDTO updateTeacherClass(long classId, String teacherCode) {
         ClassEntity classEntity = classRepository.findById(classId).orElseThrow(() -> new RuntimeException("Error: Class is not found."));
-//        if(teacherCode != null){
-//
-//        }
         UserEntity teacher = userRepository.findById(teacherCode)
                 .orElseThrow(() -> new RuntimeException("Error: Teacher ID is not found."));
         if(classRepository.existsByFormTeacher(teacher)){
@@ -92,6 +90,13 @@ public class ClassService {
         return classMapper.convertToDto(classRepository.save(classEntity));
     }
 
+    public ByteArrayInputStream getStudentsFromDb() {
+        List<UserEntity> students = userRepository.findAll();
+
+        ByteArrayInputStream in = ExcelHelper.studentsToExcel(students);
+        return in;
+    }
+
     public void addStudentFromExcel(long classId, MultipartFile file) {
         ClassEntity classEntity = classRepository.findById(classId)
                 .orElseThrow(() -> new RuntimeException("Error: Class is not found."));
@@ -100,14 +105,17 @@ public class ClassService {
                 List<UserEntity> list = ExcelHelper.excelToStudents(file.getInputStream());
                 List<UserEntity> validList = new ArrayList<>();
                 for(UserEntity user : list){
-                    if(userRepository.checkValidUser(user.getUserCode(), user.getFirstName(), user.getLastName()) == 1){
-                        validList.add(user);
-                        user.setStudentClass(classEntity);
-                        userRepository.save(user);
+                    if(userRepository.checkValidUser(user.getUserCode(), user.getFirstName(), user.getLastName()) == 1 && user.getUserCode().contains("HS")){
+                        UserEntity validUser = userRepository.findById(user.getUserCode()).orElse(null);
+                        if(validUser != null){
+                            validList.add(validUser);
+                            validUser.setStudentClass(classEntity);
+                            userRepository.save(validUser);
+                        }
                     }
-                    else {
-                        throw new RuntimeException("Error: User "+user.getUserCode()+" not match in db");
-                    }
+//                    else {
+//                        throw new RuntimeException("Error: User "+user.getUserCode()+" not match in db");
+//                    }
                 }
                 classEntity.setStudentList(validList);
                 classRepository.save(classEntity);

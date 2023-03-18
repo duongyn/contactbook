@@ -10,7 +10,11 @@ import lombok.ToString;
 @Setter
 @ToString
 public class ScheduleDTO {
+    private long scheduleId;
+
     private long lessonId;
+
+    private String scheduleTime;
 
     private String scheduleFrom;
 

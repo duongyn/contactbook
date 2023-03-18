@@ -19,10 +19,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -99,11 +99,9 @@ public class UserService {
         String password = entity.getUsername() + "@" + entity.getDob().format(formatter);
         entity.setPassword(encoder.encode(password));
         entity.setDeleted(false);
-//		entity.setCreatedDate(LocalDateTime.now());
-//		entity.setLastUpdatedDate(LocalDateTime.now());
-//		if(this.findByUsername(user.getCreatedBy()) != null){
-//			entity.setCreatedBy(this.findByUsername(user.getCreatedBy()).getStaffCode());
-//		}
+		entity.setCreatedDate(LocalDateTime.now());
+		entity.setLastUpdatedDate(LocalDateTime.now());
+
         // save
         try {
             UserEntity saveUser = userRepository.save(entity);
