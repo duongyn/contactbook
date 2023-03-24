@@ -1,6 +1,7 @@
 package com.my.contactbook.controller;
 
 import com.my.contactbook.dto.ClassDTO;
+import com.my.contactbook.dto.UserDTO;
 import com.my.contactbook.service.ClassService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -46,8 +47,15 @@ public class ClassController {
     @PutMapping("/add-teacher")
         //@PreAuthorize("hasAuthority('ADMIN')")
     ResponseEntity<ClassDTO> updateTeacherClass(@Valid @RequestBody ClassDTO dto) {
-        ClassDTO classDTO = classService.updateTeacherClass(dto.getId(), dto.getFormTeacherCode());
+        ClassDTO classDTO = classService.updateTeacherClass(dto);
         return new ResponseEntity<>(classDTO, HttpStatus.OK);
+    }
+
+    @PutMapping("/delete/{classId}")
+        //@PreAuthorize("hasAuthority('ADMIN')")
+    ResponseEntity deleteClass(@PathVariable("classId") long classId) {
+        classService.deleteClass(classId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("")
@@ -57,11 +65,23 @@ public class ClassController {
         return new ResponseEntity<>(classDTO, HttpStatus.OK);
     }
 
-    @GetMapping("/db-to-excel")
+    @GetMapping("/get-valid-teachers")
         //@PreAuthorize("hasAuthority('ADMIN')")
-    ResponseEntity<Resource> getStudentsToExcel() {
+    ResponseEntity<List<UserDTO>> findValidTeachers() {
+        return new ResponseEntity<>(classService.getValidTeachers(), HttpStatus.OK);
+    }
+
+    @GetMapping("/get-valid-students")
+        //@PreAuthorize("hasAuthority('ADMIN')")
+    ResponseEntity<List<UserDTO>> findValidStudents() {
+        return new ResponseEntity<>(classService.getValidStudents(), HttpStatus.OK);
+    }
+
+    @PutMapping("/db-to-excel")
+        //@PreAuthorize("hasAuthority('ADMIN')")
+    ResponseEntity<Resource> getStudentsToExcel(@RequestBody List<UserDTO> studentsList) {
         String filename = "students.xlsx";
-        InputStreamResource file = new InputStreamResource(classService.getStudentsFromDb());
+        InputStreamResource file = new InputStreamResource(classService.getStudentsFromDb(studentsList));
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
@@ -74,6 +94,13 @@ public class ClassController {
     ResponseEntity<ClassDTO> findClass(@PathVariable("id") long classId) {
         ClassDTO classDTO = classService.findClass(classId);
         return new ResponseEntity<>(classDTO, HttpStatus.OK);
+    }
+
+    @PostMapping("/search")
+        //@PreAuthorize("hasAuthority('ADMIN')")
+    ResponseEntity<List<ClassDTO>> searchClass(@RequestBody String name) {
+        List<ClassDTO> list = classService.searchClass(name);
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
 }

@@ -10,4 +10,6 @@ public interface ClassRepository extends JpaRepository<ClassEntity, Long> {
     Optional<ClassEntity> findByClassName(String className);
 
     Boolean existsByFormTeacher(UserEntity formTeacher);
+
+    Optional<ClassEntity> findByFormTeacher(UserEntity formTeacher);
 }

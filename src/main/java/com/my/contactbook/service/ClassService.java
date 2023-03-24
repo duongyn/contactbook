@@ -1,9 +1,11 @@
 package com.my.contactbook.service;
 
 import com.my.contactbook.dto.ClassDTO;
+import com.my.contactbook.dto.UserDTO;
 import com.my.contactbook.entity.ClassEntity;
 import com.my.contactbook.entity.UserEntity;
 import com.my.contactbook.mapper.ClassMapper;
+import com.my.contactbook.mapper.UserMapper;
 import com.my.contactbook.repository.ClassRepository;
 import com.my.contactbook.repository.UserRepository;
 import com.my.contactbook.util.ExcelHelper;
@@ -34,25 +36,56 @@ public class ClassService {
     @Autowired
     private ClassMapper classMapper;
 
+    @Autowired
+    private UserMapper userMapper;
+
     public ClassDTO findClass(long classId) {
         return classMapper.convertToDto(classRepository.findById(classId).orElseThrow(() -> new RuntimeException("Not found Class.")));
     }
 
-    public List<ClassDTO> getAll(){
-        return classMapper.toListDto(classRepository.findAll());
+    public List<ClassDTO> getAll() {
+        List<ClassEntity> list = classRepository.findAll();
+        List<ClassEntity> validList = new ArrayList<>();
+        for(ClassEntity c: list){
+            if(!c.isDeleted()){
+                validList.add(c);
+            }
+        }
+        return classMapper.toListDto(validList);
+    }
+
+    public String checkValidNameAndGrade(String name, long grade){
+        String nameNumber = name.replaceAll("[a-zA-Z]+", "");
+        String nameWord = name.replaceAll("\\d+", "");
+        String message = "";
+        if(Integer.parseInt(nameNumber) == grade && grade <= 5 && grade > 0){
+            message = "";
+        }
+        else{
+            message = "Class grade must be the same as the number in class name";
+            return message;
+        }
+        if(nameWord.matches("^[a-zA-Z]$")){
+            message = "";
+        }
+        else{
+            message = "Class name must contain only 1 number and 1 character from a to z";
+        }
+        return message;
     }
 
     public ClassDTO createClass(ClassDTO dto) {
         ClassEntity existClassName = classRepository.findByClassName(dto.getClassName()).orElse(null);
-        if(existClassName != null){
-            throw new RuntimeException("Error: Class "+dto.getClassName()+" exists.");
+        if (existClassName != null) {
+            throw new RuntimeException("Error: Class " + dto.getClassName() + " exists.");
         }
         ClassEntity entity = classMapper.convertToEntity(dto);
+        entity.setDeleted(false);
         //find form teacher from db, then add to class
-        if(dto.getFormTeacherCode() != null){
+        if (dto.getFormTeacherCode() != null) {
             UserEntity teacher = userRepository.findById(dto.getFormTeacherCode())
                     .orElseThrow(() -> new RuntimeException("Error: Teacher ID is not found."));
-            if(classRepository.existsByFormTeacher(teacher)){
+            if (classRepository.existsByFormTeacher(teacher)) {
                 throw new RuntimeException("Error: Teacher has not available");
             }
             if (teacher.getRoles().stream().anyMatch(role -> role.getRoleName().equalsIgnoreCase("TEACHER"))) {
@@ -61,11 +94,14 @@ public class ClassService {
                 throw new RuntimeException("Error: Not a correct form teacher.");
             }
         }
-        //save class to database
-        if(dto.getListStudentCode() != null){
-            return addStudentToClass(classRepository.save(entity), dto.getListStudentCode());
+        String message = checkValidNameAndGrade(entity.getClassName(), entity.getClassGrade());
+        if(!message.isEmpty()){
+            throw new RuntimeException(message);
         }
-        else{
+        //save class to database
+        if (dto.getListStudentCode() != null) {
+            return addStudentToClass(classRepository.save(entity), dto.getListStudentCode());
+        } else {
             return addStudentToClass(classRepository.save(entity), new ArrayList<>());
         }
     }
@@ -75,24 +111,66 @@ public class ClassService {
         return addStudentToClass(classEntity, studentCodes);
     }
 
-    public ClassDTO updateTeacherClass(long classId, String teacherCode) {
-        ClassEntity classEntity = classRepository.findById(classId).orElseThrow(() -> new RuntimeException("Error: Class is not found."));
-        UserEntity teacher = userRepository.findById(teacherCode)
-                .orElseThrow(() -> new RuntimeException("Error: Teacher ID is not found."));
-        if(classRepository.existsByFormTeacher(teacher)){
-            throw new RuntimeException("Error: Teacher has not available");
+    public List<UserDTO> getValidTeachers() {
+        List<UserEntity> list = userRepository.findAll();
+        List<UserEntity> validList = new ArrayList<>();
+        for (UserEntity user : list) {
+            if (!classRepository.existsByFormTeacher(user) && !user.isDeleted() && user.getRoles().get(0).getRolePrefix().equals("GV")) {
+                validList.add(user);
+            }
         }
-        if (teacher.getRoles().stream().anyMatch(role -> role.getRoleName().equalsIgnoreCase("TEACHER"))) {
-            classEntity.setFormTeacher(teacher);
-        } else {
-            throw new RuntimeException("Error: Not a correct form teacher.");
+        return validList != null ? userMapper.toListDto(validList) : null;
+    }
+
+    public List<UserDTO> getValidStudents() {
+        List<UserEntity> list = userRepository.findAll();
+        List<UserEntity> validList = new ArrayList<>();
+        for (UserEntity user : list) {
+            if (user.getStudentClass() == null && !user.isDeleted() && user.getRoles().get(0).getRolePrefix().equals("HS")) {
+                validList.add(user);
+            }
+        }
+        return validList != null ? userMapper.toListDto(validList) : null;
+    }
+
+    public ClassDTO updateTeacherClass(ClassDTO classDTO) {
+        ClassEntity classEntity = classRepository.findById(classDTO.getId()).orElseThrow(() -> new RuntimeException("Error: Class is not found."));
+        classEntity.setClassName(classDTO.getClassName());
+        classEntity.setClassGrade(Integer.parseInt(classDTO.getClassGrade()));
+        String message = checkValidNameAndGrade(classEntity.getClassName(), classEntity.getClassGrade());
+        if(!message.isEmpty()){
+            throw new RuntimeException(message);
+        }
+        if(classDTO.getFormTeacherCode() != null){
+            UserEntity teacher = userRepository.findById(classDTO.getFormTeacherCode())
+                    .orElseThrow(() -> new RuntimeException("Error: Teacher ID is not found."));
+            ClassEntity existedClass = classRepository.findByFormTeacher(teacher).orElse(null);
+            if (existedClass != null && existedClass.getClassId() != classEntity.getClassId()) {
+                throw new RuntimeException("Teacher has not available");
+            }
+            if (teacher.getRoles().stream().anyMatch(role -> role.getRoleName().equalsIgnoreCase("TEACHER"))) {
+                classEntity.setFormTeacher(teacher);
+            } else {
+                throw new RuntimeException("Not a correct form teacher.");
+            }
         }
         return classMapper.convertToDto(classRepository.save(classEntity));
     }
 
-    public ByteArrayInputStream getStudentsFromDb() {
-        List<UserEntity> students = userRepository.findAll();
-
+    public ByteArrayInputStream getStudentsFromDb(List<UserDTO> studentsList) {
+        List<UserEntity> list = new ArrayList<>();
+        for (UserDTO dto : studentsList) {
+            UserEntity user = userRepository.findById(dto.getUserCode()).orElse(null);
+            if (user != null) {
+                list.add(user);
+            }
+        }
+        List<UserEntity> students = new ArrayList<>();
+        for (UserEntity user : list) {
+            if (user.getRoles().get(0).getRolePrefix().equals("HS") && !user.isDeleted()) {
+                students.add(user);
+            }
+        }
         ByteArrayInputStream in = ExcelHelper.studentsToExcel(students);
         return in;
     }
@@ -100,22 +178,28 @@ public class ClassService {
     public void addStudentFromExcel(long classId, MultipartFile file) {
         ClassEntity classEntity = classRepository.findById(classId)
                 .orElseThrow(() -> new RuntimeException("Error: Class is not found."));
-        if(ExcelHelper.hasExcelFormat(file)) {
+        if (ExcelHelper.hasExcelFormat(file)) {
             try {
                 List<UserEntity> list = ExcelHelper.excelToStudents(file.getInputStream());
                 List<UserEntity> validList = new ArrayList<>();
-                for(UserEntity user : list){
-                    if(userRepository.checkValidUser(user.getUserCode(), user.getFirstName(), user.getLastName()) == 1 && user.getUserCode().contains("HS")){
+                for (UserEntity user : list) {
+                    if (userRepository.checkValidUser(user.getUserCode(), user.getFirstName(), user.getLastName()) == 1
+                            && user.getUserCode().contains("HS")
+                    ) {
                         UserEntity validUser = userRepository.findById(user.getUserCode()).orElse(null);
-                        if(validUser != null){
+                        ClassEntity existClass = validUser.getStudentClass();
+                        if (validUser != null && existClass == null) {
                             validList.add(validUser);
                             validUser.setStudentClass(classEntity);
                             userRepository.save(validUser);
                         }
+                        else {
+                            throw new RuntimeException("Error: User "+validUser.getUserCode()+" already in a class");
+                        }
                     }
-//                    else {
-//                        throw new RuntimeException("Error: User "+user.getUserCode()+" not match in db");
-//                    }
+                    else {
+                        throw new RuntimeException("Error: User "+user.getUserCode()+"does not match in database");
+                    }
                 }
                 classEntity.setStudentList(validList);
                 classRepository.save(classEntity);
@@ -129,7 +213,7 @@ public class ClassService {
         ClassEntity classEntity = classRepository.findById(entity.getClassId()).orElseThrow(() -> new RuntimeException("Error: Class is not found."));
         //find student list from db, then add to class
         List<UserEntity> listStudent = new ArrayList<>();
-        if(studentCodes != null && studentCodes.size() > 0){
+        if (studentCodes != null && studentCodes.size() > 0) {
             for (String studentCode : studentCodes) {
                 UserEntity userEntity = userRepository.findById(studentCode)
                         .orElseThrow(() -> new RuntimeException("Error: Student ID is not found."));
@@ -145,6 +229,32 @@ public class ClassService {
             classEntity.setStudentList(listStudent);
         }
         return classMapper.convertToDto(classRepository.save(classEntity));
+    }
+
+    public List<ClassDTO> searchClass(String name){
+        List<ClassEntity> list = classRepository.findAll();
+        List<ClassEntity> searchList = new ArrayList<>();
+        for(ClassEntity c: list){
+            if(!c.isDeleted() && c.getClassName().contains(name)){
+                searchList.add(c);
+            }
+        }
+        return classMapper.toListDto(searchList);
+    }
+
+    public void deleteClass(long classId) {
+        ClassEntity classEntity = classRepository.findById(classId).orElseThrow(() -> new RuntimeException("Error: Class is not found."));
+        if (!classEntity.isDeleted()) {
+            classEntity.setDeleted(true);
+            List<UserEntity> studentList = classEntity.getStudentList();
+            for (UserEntity user : studentList) {
+                user.setStudentClass(null);
+            }
+            classEntity.setFormTeacher(null);
+            classEntity.setStudentList(null);
+            classRepository.save(classEntity);
+        }
+
     }
 
 }

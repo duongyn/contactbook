@@ -69,6 +69,15 @@ public class UserMapper {
         return listDto;
     }
 
+    public List<UserEntity> toListEntity(List<UserDTO> listDto) {
+        List<UserEntity> listEntity = new ArrayList<>();
+
+        listDto.forEach(e -> {
+            listEntity.add(this.convertToEntity(e));
+        });
+        return listEntity;
+    }
+
     public UserEditDTO convertEditToDto(UserEntity user) {
         try {
             UserEditDTO userDTO = modelMapper.map(user, UserEditDTO.class);
