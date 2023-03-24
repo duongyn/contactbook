@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -37,6 +39,17 @@ public class ScheduleService {
 
     @Autowired
     private ScheduleMapper scheduleMapper;
+
+    public List<ScheduleDTO> findAllSchedules() {
+        List<ScheduleEntity> list = scheduleRepository.findAll();
+        List<ScheduleEntity> validList = new ArrayList<>();
+        for(ScheduleEntity s: list){
+            if(!s.isDeleted()){
+                validList.add(s);
+            }
+        }
+        return scheduleMapper.toListDto(validList);
+    }
 
     public ScheduleDTO createSchedule(ScheduleDTO dto) {
         ScheduleEntity schedule = scheduleMapper.convertToEntity(dto);

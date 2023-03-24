@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/schedules")
@@ -42,5 +43,12 @@ public class ScheduleController {
     ResponseEntity<ScheduleDTO> findSchedule(@PathVariable("id") long scheduleId) {
         ScheduleDTO dto = scheduleService.findSchedule(scheduleId);
         return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
+    @GetMapping("")
+        //@PreAuthorize("hasAuthority('ADMIN')")
+    ResponseEntity<List<ScheduleDTO>> findAllSchedules() {
+        List<ScheduleDTO> list = scheduleService.findAllSchedules();
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
 }
