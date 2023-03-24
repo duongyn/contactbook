@@ -46,7 +46,6 @@ public class ScheduleController {
     }
 
     @GetMapping("")
-        //@PreAuthorize("hasAuthority('ADMIN')")
     ResponseEntity<List<ScheduleDTO>> findAllSchedules() {
         List<ScheduleDTO> list = scheduleService.findAllSchedules();
         return new ResponseEntity<>(list, HttpStatus.OK);
