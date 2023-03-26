@@ -1,6 +1,7 @@
 package com.my.contactbook.controller;
 
 import com.my.contactbook.dto.ScheduleDTO;
+import com.my.contactbook.dto.SlotDTO;
 import com.my.contactbook.service.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,12 @@ import java.util.List;
 public class ScheduleController {
     @Autowired
     ScheduleService scheduleService;
+
+    @GetMapping("/all-slots")
+    ResponseEntity<List<SlotDTO>> findAllSlot() {
+        List<SlotDTO> list = scheduleService.getAllSlots();
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
 
     @PostMapping("")
         //@PreAuthorize("hasAuthority('ADMIN')")

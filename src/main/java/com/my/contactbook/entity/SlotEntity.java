@@ -1,8 +1,6 @@
 package com.my.contactbook.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalTime;
@@ -13,7 +11,15 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class SlotEntity extends BaseEntity{
+
+    public SlotEntity(String slotName, LocalTime fromTime, LocalTime toTime){
+        this.slotName = slotName;
+        this.fromTime = fromTime;
+        this.toTime = toTime;
+    }
 
     @Id
     @Column(name = "slot_id")
@@ -29,7 +35,7 @@ public class SlotEntity extends BaseEntity{
     @Column(name = "to_time", columnDefinition = "TIME")
     private LocalTime toTime;
 
-    @OneToMany(mappedBy = "lessonSlot")
-    private List<LessonEntity> lessons;
+    @OneToMany(mappedBy = "scheduleSlot")
+    private List<ScheduleEntity> schedules;
 
 }

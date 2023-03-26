@@ -9,16 +9,11 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class ScheduleDTO {
-    private long scheduleId;
-
-    private String scheduleTime;
-
+public class SlotDTO {
+    private long slotId;
     private String slotName;
 
-    private String scheduleFrom;
+    private String slotFrom;
+    private String slotTo;
 
-    private String scheduleTo;
-
-    private String className;
 }

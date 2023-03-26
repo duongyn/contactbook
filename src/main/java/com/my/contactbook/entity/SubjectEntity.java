@@ -32,7 +32,7 @@ public class SubjectEntity extends BaseEntity{
     @JoinTable(name = "teacher_subject", joinColumns = @JoinColumn(name = "user_code"), inverseJoinColumns = @JoinColumn(name = "subject_id"))
     private List<UserEntity> teachers;
 
-    @OneToMany(mappedBy = "lessonSubject")
-    private List<LessonEntity> lessons;
+//    @OneToMany(mappedBy = "lessonSubject")
+//    private List<LessonEntity> lessons;
 
 }

@@ -17,17 +17,17 @@ public class LessonController {
     @Autowired
     LessonService lessonService;
 
-    @PostMapping("")
-        //@PreAuthorize("hasAuthority('ADMIN')")
-    ResponseEntity<LessonDTO> createLesson(@Valid @RequestBody LessonDTO dto) {
-        LessonDTO lessonDTO = lessonService.createLesson(dto);
-        return new ResponseEntity<>(lessonDTO, HttpStatus.CREATED);
-    }
-
-    @GetMapping("/subject/{subjectId}")
-        //@PreAuthorize("hasAuthority('ADMIN')")
-    ResponseEntity<List<LessonDTO>> findLessonsBySubject(@PathVariable("subjectId") long subjectId) {
-        List<LessonDTO> list = lessonService.findBySubjectId(subjectId);
-        return new ResponseEntity<>(list, HttpStatus.OK);
-    }
+//    @PostMapping("")
+//        //@PreAuthorize("hasAuthority('ADMIN')")
+//    ResponseEntity<LessonDTO> createLesson(@Valid @RequestBody LessonDTO dto) {
+//        LessonDTO lessonDTO = lessonService.createLesson(dto);
+//        return new ResponseEntity<>(lessonDTO, HttpStatus.CREATED);
+//    }
+//
+//    @GetMapping("/subject/{subjectId}")
+//        //@PreAuthorize("hasAuthority('ADMIN')")
+//    ResponseEntity<List<LessonDTO>> findLessonsBySubject(@PathVariable("subjectId") long subjectId) {
+//        List<LessonDTO> list = lessonService.findBySubjectId(subjectId);
+//        return new ResponseEntity<>(list, HttpStatus.OK);
+//    }
 }

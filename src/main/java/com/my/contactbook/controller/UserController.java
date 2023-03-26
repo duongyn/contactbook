@@ -2,7 +2,10 @@ package com.my.contactbook.controller;
 
 import com.my.contactbook.dto.UserDTO;
 import com.my.contactbook.dto.UserEditDTO;
+import com.my.contactbook.entity.RoleEntity;
+import com.my.contactbook.entity.UserEntity;
 import com.my.contactbook.service.RoleService;
+import com.my.contactbook.service.ScheduleService;
 import com.my.contactbook.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -13,6 +16,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -27,9 +32,14 @@ public class UserController {
     @Autowired
     RoleService roleService;
 
+    @Autowired
+    ScheduleService scheduleService;
+
     @EventListener(ApplicationReadyEvent.class)
-    public void createRolesForDb() {
+    public void createDefaultDataForDb() {
         roleService.createRoles();
+        userService.createDefaultAdmin();
+        scheduleService.createDefaultSlots();
     }
 
     @GetMapping("/roles")
@@ -39,7 +49,7 @@ public class UserController {
     }
 
     @PostMapping("")
-        @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserDTO user) {
         UserDTO dto = userService.createUser(user);
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
@@ -53,7 +63,7 @@ public class UserController {
     }
 
     @PutMapping("/delete/{userCode}")
-        @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     ResponseEntity deleteUser(@PathVariable("userCode") String userCode) {
         userService.deleteUser(userCode);
         return new ResponseEntity<>(HttpStatus.OK);

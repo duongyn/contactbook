@@ -53,6 +53,22 @@ public class UserService {
         return userMapper.convertToDto(userRepository.findByUsername(username).orElse(null));
     }
 
+    public void createDefaultAdmin() {
+        List<UserEntity> list = userRepository.findAll();
+        if (list.isEmpty()) {
+            UserDTO user = new UserDTO();
+            user.setFirstName("Duong");
+            user.setLastName("Hai");
+            user.setGender("Male");
+            user.setDob("1998-12-11");
+            List<String> roles = new ArrayList<>();
+            roles.add("ADMIN");
+            user.setRoleName(roles);
+            user.setAddress("Hanoi");
+            createUser(user);
+        }
+    }
+
     public UserDTO createUser(UserDTO user) {
         List<String> roles = user.getRoleName();
         List<RoleEntity> roleList = new ArrayList<>();
@@ -99,8 +115,8 @@ public class UserService {
         String password = entity.getUsername() + "@" + entity.getDob().format(formatter);
         entity.setPassword(encoder.encode(password));
         entity.setDeleted(false);
-		entity.setCreatedDate(LocalDateTime.now());
-		entity.setLastUpdatedDate(LocalDateTime.now());
+        entity.setCreatedDate(LocalDateTime.now());
+        entity.setLastUpdatedDate(LocalDateTime.now());
 
         // save
         try {
@@ -114,8 +130,8 @@ public class UserService {
     public List<UserDTO> getAll() {
         List<UserEntity> list = userRepository.findAll();
         List<UserEntity> listActive = new ArrayList<>();
-        for(UserEntity u : list){
-            if(!u.isDeleted()){
+        for (UserEntity u : list) {
+            if (!u.isDeleted()) {
                 listActive.add(u);
             }
         }
@@ -149,7 +165,7 @@ public class UserService {
         return userName.toLowerCase() + lastIndex;
     }
 
-    public void deleteUser(String userCode){
+    public void deleteUser(String userCode) {
         UserEntity user = userRepository.findById(userCode).orElseThrow(() -> new RuntimeException("Error: User is not found."));
         user.setDeleted(true);
         user.setStatus(UserEntity.EStatus.DISABLE);

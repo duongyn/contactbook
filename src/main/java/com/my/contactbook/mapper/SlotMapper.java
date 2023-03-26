@@ -1,9 +1,9 @@
 package com.my.contactbook.mapper;
 
-import com.my.contactbook.dto.MarkDTO;
-import com.my.contactbook.dto.ScheduleDTO;
-import com.my.contactbook.entity.MarkEntity;
-import com.my.contactbook.entity.ScheduleEntity;
+import com.my.contactbook.dto.SlotDTO;
+import com.my.contactbook.dto.SubjectDTO;
+import com.my.contactbook.entity.SlotEntity;
+import com.my.contactbook.entity.SubjectEntity;
 import com.my.contactbook.exception.UserException;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -15,18 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class ScheduleMapper {
-    private static final Logger logger = LoggerFactory.getLogger(ScheduleMapper.class);
-
+public class SlotMapper {
+    private static final Logger logger = LoggerFactory.getLogger(SlotMapper.class);
     @Autowired
     ModelMapper modelMapper;
 
-    public ScheduleDTO convertToDto(ScheduleEntity entity) {
+    public SlotDTO convertToDto(SlotEntity slot) {
         try {
-            ScheduleDTO dto = modelMapper.map(entity, ScheduleDTO.class);
-            dto.setScheduleFrom(entity.getScheduleSlot().getFromTime().toString());
-            dto.setScheduleTo(entity.getScheduleSlot().getToTime().toString());
-            dto.setClassName(entity.getClassId().getClassName());
+            SlotDTO dto = modelMapper.map(slot, SlotDTO.class);
+
             return dto;
         } catch (Exception ex) {
             logger.warn(ex.getMessage());
@@ -35,9 +32,9 @@ public class ScheduleMapper {
 
     }
 
-    public ScheduleEntity convertToEntity(ScheduleDTO dto) {
+    public SlotEntity convertToEntity(SlotDTO dto) {
         try {
-            ScheduleEntity entity = modelMapper.map(dto, ScheduleEntity.class);
+            SlotEntity entity = modelMapper.map(dto, SlotEntity.class);
 
             return entity;
         } catch (Exception ex) {
@@ -46,8 +43,8 @@ public class ScheduleMapper {
         }
     }
 
-    public List<ScheduleDTO> toListDto(List<ScheduleEntity> listEntity) {
-        List<ScheduleDTO> listDto = new ArrayList<>();
+    public List<SlotDTO> toListDto(List<SlotEntity> listEntity) {
+        List<SlotDTO> listDto = new ArrayList<>();
 
         listEntity.forEach(e -> {
             listDto.add(this.convertToDto(e));

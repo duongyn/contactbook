@@ -5,7 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "schedule")
@@ -20,11 +20,11 @@ public class ScheduleEntity extends BaseEntity{
     private long scheduleId;
 
     @Column(name = "schedule_time")
-    private LocalDateTime scheduleTime;
+    private LocalDate scheduleTime;
 
-    @OneToOne
-    @JoinColumn(name = "lesson_id", referencedColumnName = "lesson_id")
-    private LessonEntity lesson;
+    @ManyToOne
+    @JoinColumn(name = "schedule_slot")
+    private SlotEntity scheduleSlot;
 
     @OneToOne
     @JoinColumn(name = "class_id", referencedColumnName = "class_id")
