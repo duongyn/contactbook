@@ -6,6 +6,7 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "schedule")
@@ -26,9 +27,13 @@ public class ScheduleEntity extends BaseEntity{
     @JoinColumn(name = "schedule_slot")
     private SlotEntity scheduleSlot;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "class_id", referencedColumnName = "class_id")
     private ClassEntity classId;
+
+    @ManyToOne
+    @JoinColumn(name = "subject_id", referencedColumnName = "subject_id")
+    private SubjectEntity subject;
 
 
 }

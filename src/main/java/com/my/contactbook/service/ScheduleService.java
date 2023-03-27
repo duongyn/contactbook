@@ -2,11 +2,14 @@ package com.my.contactbook.service;
 
 import com.my.contactbook.dto.ScheduleDTO;
 import com.my.contactbook.dto.SlotDTO;
+import com.my.contactbook.dto.SubjectDTO;
 import com.my.contactbook.entity.ClassEntity;
 import com.my.contactbook.entity.ScheduleEntity;
 import com.my.contactbook.entity.SlotEntity;
+import com.my.contactbook.entity.SubjectEntity;
 import com.my.contactbook.mapper.ScheduleMapper;
 import com.my.contactbook.mapper.SlotMapper;
+import com.my.contactbook.mapper.SubjectMapper;
 import com.my.contactbook.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +41,9 @@ public class ScheduleService {
     @Autowired
     private SlotRepository slotRepository;
 
+    @Autowired
+    private SubjectRepository subjectRepository;
+
 //    @Autowired
 //    private LessonRepository lessonRepository;
 
@@ -46,6 +52,9 @@ public class ScheduleService {
 
     @Autowired
     private SlotMapper slotMapper;
+
+    @Autowired
+    private SubjectMapper subjectMapper;
 
     public List<ScheduleDTO> findAllSchedules() {
         List<ScheduleEntity> list = scheduleRepository.findAll();
@@ -58,6 +67,10 @@ public class ScheduleService {
         return scheduleMapper.toListDto(validList);
     }
 
+    public List<SubjectDTO> getByClassName(String className){
+        return subjectMapper.toListDto(subjectRepository.findByClassName(className));
+    }
+
     public ScheduleDTO createSchedule(ScheduleDTO dto) {
         ScheduleEntity schedule = scheduleMapper.convertToEntity(dto);
 //        LessonEntity lesson = lessonRepository.findById(dto.getLessonId())
@@ -68,9 +81,14 @@ public class ScheduleService {
         schedule.setClassId(classEntity);
         SlotEntity slot = slotRepository.findBySlotName(dto.getSlotName()).orElseThrow(() -> new RuntimeException("Not found slot"));
         schedule.setScheduleSlot(slot);
+        SubjectEntity subject = subjectRepository.findBySubjectNameAndSubjectGrade(dto.getSubjectName(), dto.getSubjectGrade())
+                .orElseThrow(() -> new RuntimeException("Not found subject "+dto.getSubjectName()));
+        schedule.setSubject(subject);
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         schedule.setScheduleTime(LocalDate.parse(dto.getScheduleTime(), df));
-
+        if(scheduleRepository.existsByScheduleTimeAndScheduleSlotAndClassIdAndSubject(schedule.getScheduleTime(), schedule.getScheduleSlot(), schedule.getClassId(),subject)){
+            throw new RuntimeException("Schedule exists in database");
+        }
         return scheduleMapper.convertToDto(scheduleRepository.save(schedule));
     }
 
@@ -107,7 +125,14 @@ public class ScheduleService {
         schedule.setClassId(classEntity);
         SlotEntity slot = slotRepository.findBySlotName(dto.getSlotName()).orElseThrow(() -> new RuntimeException("Not found slot"));
         schedule.setScheduleSlot(slot);
-        schedule.setScheduleTime(LocalDate.parse(dto.getScheduleTime()));
+        SubjectEntity subject = subjectRepository.findBySubjectNameAndSubjectGrade(dto.getSubjectName(), dto.getSubjectGrade())
+                .orElseThrow(() -> new RuntimeException("Not found subject "+dto.getSubjectName()));
+        schedule.setSubject(subject);
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        schedule.setScheduleTime(LocalDate.parse(dto.getScheduleTime(), df));
+        if(scheduleRepository.existsByScheduleTimeAndScheduleSlotAndClassIdAndSubject(schedule.getScheduleTime(), schedule.getScheduleSlot(), schedule.getClassId(),subject)){
+            throw new RuntimeException("Schedule exists in database");
+        }
         return scheduleMapper.convertToDto(scheduleRepository.save(schedule));
     }
 

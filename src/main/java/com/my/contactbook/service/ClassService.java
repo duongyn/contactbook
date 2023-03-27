@@ -3,10 +3,12 @@ package com.my.contactbook.service;
 import com.my.contactbook.dto.ClassDTO;
 import com.my.contactbook.dto.UserDTO;
 import com.my.contactbook.entity.ClassEntity;
+import com.my.contactbook.entity.SubjectEntity;
 import com.my.contactbook.entity.UserEntity;
 import com.my.contactbook.mapper.ClassMapper;
 import com.my.contactbook.mapper.UserMapper;
 import com.my.contactbook.repository.ClassRepository;
+import com.my.contactbook.repository.SubjectRepository;
 import com.my.contactbook.repository.UserRepository;
 import com.my.contactbook.util.ExcelHelper;
 import org.slf4j.Logger;
@@ -32,6 +34,9 @@ public class ClassService {
 
     @Autowired
     private ClassRepository classRepository;
+
+    @Autowired
+    private SubjectRepository subjectRepository;
 
     @Autowired
     private ClassMapper classMapper;
@@ -133,10 +138,25 @@ public class ClassService {
         return validList != null ? userMapper.toListDto(validList) : null;
     }
 
+    public void addSubjectForTeacher(long grade,UserEntity teacher) {
+        List<SubjectEntity> list = subjectRepository.findBySubjectGrade(String.valueOf(grade));
+        System.out.println(list.get(0));
+        if(!list.isEmpty()){
+            teacher.setTeacherSubjects(list);
+            System.out.println(teacher.getTeacherSubjects());
+            userRepository.save(teacher);
+        }
+    }
+
     public ClassDTO updateTeacherClass(ClassDTO classDTO) {
         ClassEntity classEntity = classRepository.findById(classDTO.getId()).orElseThrow(() -> new RuntimeException("Error: Class is not found."));
         classEntity.setClassName(classDTO.getClassName());
-        classEntity.setClassGrade(Integer.parseInt(classDTO.getClassGrade()));
+        try {
+            classEntity.setClassGrade(Integer.parseInt(classDTO.getClassGrade()));
+        } catch (Exception ex){
+            throw new RuntimeException("Class grade must be a number");
+        }
+
         String message = checkValidNameAndGrade(classEntity.getClassName(), classEntity.getClassGrade());
         if(!message.isEmpty()){
             throw new RuntimeException(message);
@@ -153,6 +173,7 @@ public class ClassService {
             } else {
                 throw new RuntimeException("Not a correct form teacher.");
             }
+            addSubjectForTeacher(classEntity.getClassGrade(), teacher);
         }
         return classMapper.convertToDto(classRepository.save(classEntity));
     }

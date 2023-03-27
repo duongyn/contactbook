@@ -27,6 +27,7 @@ public class ScheduleMapper {
             dto.setScheduleFrom(entity.getScheduleSlot().getFromTime().toString());
             dto.setScheduleTo(entity.getScheduleSlot().getToTime().toString());
             dto.setClassName(entity.getClassId().getClassName());
+            dto.setSubjectName(entity.getSubject().getSubjectName());
             return dto;
         } catch (Exception ex) {
             logger.warn(ex.getMessage());

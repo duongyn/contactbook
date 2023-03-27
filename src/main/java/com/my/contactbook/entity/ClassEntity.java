@@ -31,8 +31,8 @@ public class ClassEntity extends BaseEntity{
 
     private long classGrade;
 
-    @OneToOne(mappedBy = "classId")
-    private ScheduleEntity classSchedule;
+    @OneToMany(mappedBy = "classId")
+    private List<ScheduleEntity> classSchedule;
 
 //    @OneToMany(mappedBy = "lessonClass")
 //    private List<LessonEntity> lessons;

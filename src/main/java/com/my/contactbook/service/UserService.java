@@ -177,7 +177,7 @@ public class UserService {
         switch (dto.getEditField()) {
             case "teacherSubject":
                 if (user.getRoles().stream().anyMatch(role -> role.getRoleName().equalsIgnoreCase("TEACHER"))) {
-                    SubjectEntity subject = subjectRepository.findBySubjectName(dto.getEditValue())
+                    SubjectEntity subject = subjectRepository.findBySubjectNameAndSubjectGrade(dto.getEditValue(), "1")
                             .orElseThrow(() -> new RuntimeException("Error: Subject is not found."));
                     List<SubjectEntity> list = new ArrayList<>();
                     list.add(subject);

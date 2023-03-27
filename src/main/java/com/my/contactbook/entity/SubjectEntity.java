@@ -28,9 +28,11 @@ public class SubjectEntity extends BaseEntity{
     @OneToMany(mappedBy = "subjectId")
     private List<MarkEntity> subjectMarks;
 
-    @ManyToMany
-    @JoinTable(name = "teacher_subject", joinColumns = @JoinColumn(name = "user_code"), inverseJoinColumns = @JoinColumn(name = "subject_id"))
+    @ManyToMany(mappedBy = "teacherSubjects")
     private List<UserEntity> teachers;
+
+    @OneToMany(mappedBy = "subject")
+    private List<ScheduleEntity> subjectSchedule;
 
 //    @OneToMany(mappedBy = "lessonSubject")
 //    private List<LessonEntity> lessons;

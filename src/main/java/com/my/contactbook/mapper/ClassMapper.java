@@ -45,7 +45,7 @@ public class ClassMapper {
             return entity;
         } catch (Exception ex) {
             logger.warn(ex.getMessage());
-            throw new UserException(UserException.ERR_CONVERT_DTO_ENTITY_FAIL);
+            throw new RuntimeException("Class grade must be a number");
         }
     }
 

@@ -55,7 +55,8 @@ public class UserEntity extends BaseEntity
     @OneToMany(mappedBy = "userId")
     private List<MarkEntity> userMarks;
 
-    @ManyToMany(mappedBy = "teachers")
+    @ManyToMany
+    @JoinTable(name = "teacher_subject", joinColumns = @JoinColumn(name = "user_code"), inverseJoinColumns = @JoinColumn(name = "subject_id"))
     private List<SubjectEntity> teacherSubjects;
 
     @ManyToOne
