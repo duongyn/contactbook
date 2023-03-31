@@ -82,7 +82,13 @@ public class ClassService {
     public ClassDTO createClass(ClassDTO dto) {
         ClassEntity existClassName = classRepository.findByClassName(dto.getClassName()).orElse(null);
         if (existClassName != null) {
-            throw new RuntimeException("Error: Class " + dto.getClassName() + " exists.");
+            if(existClassName.isDeleted()){
+                existClassName.setDeleted(false);
+                return addStudentToClass(classRepository.save(existClassName), new ArrayList<>());
+            }
+            else{
+                throw new RuntimeException("Error: Class " + dto.getClassName() + " exists.");
+            }
         }
         ClassEntity entity = classMapper.convertToEntity(dto);
         entity.setDeleted(false);
@@ -103,11 +109,13 @@ public class ClassService {
         if(!message.isEmpty()){
             throw new RuntimeException(message);
         }
+        ClassEntity createdClass = classRepository.save(entity);
+        addSubjectForTeacher(createdClass, null);
         //save class to database
         if (dto.getListStudentCode() != null) {
-            return addStudentToClass(classRepository.save(entity), dto.getListStudentCode());
+            return addStudentToClass(createdClass, dto.getListStudentCode());
         } else {
-            return addStudentToClass(classRepository.save(entity), new ArrayList<>());
+            return addStudentToClass(createdClass, new ArrayList<>());
         }
     }
 
@@ -138,13 +146,15 @@ public class ClassService {
         return validList != null ? userMapper.toListDto(validList) : null;
     }
 
-    public void addSubjectForTeacher(long grade,UserEntity teacher) {
-        List<SubjectEntity> list = subjectRepository.findBySubjectGrade(String.valueOf(grade));
-        System.out.println(list.get(0));
+    public void addSubjectForTeacher(ClassEntity classEntity,UserEntity teacher) {
+        List<SubjectEntity> list = subjectRepository.findBySubjectGrade(String.valueOf(classEntity.getClassGrade()));
         if(!list.isEmpty()){
-            teacher.setTeacherSubjects(list);
-            System.out.println(teacher.getTeacherSubjects());
-            userRepository.save(teacher);
+            classEntity.setClassSubjects(list);
+            if(teacher != null) {
+                teacher.setTeacherSubjects(list);
+                userRepository.save(teacher);
+            }
+            classRepository.save(classEntity);
         }
     }
 
@@ -173,7 +183,7 @@ public class ClassService {
             } else {
                 throw new RuntimeException("Not a correct form teacher.");
             }
-            addSubjectForTeacher(classEntity.getClassGrade(), teacher);
+            addSubjectForTeacher(classEntity, teacher);
         }
         return classMapper.convertToDto(classRepository.save(classEntity));
     }

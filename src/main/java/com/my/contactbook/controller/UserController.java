@@ -79,5 +79,8 @@ public class UserController {
         return new ResponseEntity<>(userService.getUserByUsername(username), HttpStatus.OK);
     }
 
-
+    @GetMapping("/{id}")
+    ResponseEntity<UserDTO> getUserByCode(@PathVariable("id") String userCode) {
+        return new ResponseEntity<>(userService.getUserByCode(userCode), HttpStatus.OK);
+    }
 }

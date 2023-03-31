@@ -53,6 +53,10 @@ public class UserService {
         return userMapper.convertToDto(userRepository.findByUsername(username).orElse(null));
     }
 
+    public UserDTO getUserByCode(String userCode) {
+        return userMapper.convertToDto(userRepository.findById(userCode).orElse(null));
+    }
+
     public void createDefaultAdmin() {
         List<UserEntity> list = userRepository.findAll();
         if (list.isEmpty()) {

@@ -31,6 +31,9 @@ public class SubjectEntity extends BaseEntity{
     @ManyToMany(mappedBy = "teacherSubjects")
     private List<UserEntity> teachers;
 
+    @ManyToMany(mappedBy = "classSubjects")
+    private List<ClassEntity> subjectsClass;
+
     @OneToMany(mappedBy = "subject")
     private List<ScheduleEntity> subjectSchedule;
 
