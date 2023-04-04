@@ -2,11 +2,13 @@ package com.my.contactbook.service;
 
 import com.my.contactbook.dto.UserDTO;
 import com.my.contactbook.dto.UserEditDTO;
+import com.my.contactbook.entity.ClassEntity;
 import com.my.contactbook.entity.RoleEntity;
 import com.my.contactbook.entity.SubjectEntity;
 import com.my.contactbook.entity.UserEntity;
 import com.my.contactbook.exception.UserException;
 import com.my.contactbook.mapper.UserMapper;
+import com.my.contactbook.repository.ClassRepository;
 import com.my.contactbook.repository.RoleRepository;
 import com.my.contactbook.repository.SubjectRepository;
 import com.my.contactbook.repository.UserRepository;
@@ -36,6 +38,9 @@ public class UserService {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private ClassRepository classRepository;
 
     @Autowired
     private SubjectRepository subjectRepository;
@@ -202,6 +207,21 @@ public class UserService {
         }
         userRepository.save(user);
         return userMapper.convertToDto(user);
+    }
+
+    public List<UserDTO> getUsersByClass(String className) {
+        ClassEntity classEntity = classRepository.findByClassName(className).orElseThrow(() -> new RuntimeException("Not found class"));
+        List<UserEntity> list = userRepository.findByStudentClass(classEntity);
+        List<UserEntity> listActive = new ArrayList<>();
+        for (UserEntity u : list) {
+            if (!u.isDeleted()) {
+                listActive.add(u);
+            }
+        }
+        if (listActive.isEmpty()) {
+            throw new UserException(UserException.LIST_NOT_FOUND);
+        }
+        return userMapper.toListDto(listActive);
     }
 
 }

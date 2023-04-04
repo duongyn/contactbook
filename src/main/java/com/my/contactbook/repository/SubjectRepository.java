@@ -13,12 +13,12 @@ public interface SubjectRepository extends JpaRepository<SubjectEntity, Long> {
 
     List<SubjectEntity> findBySubjectGrade(String subjectGrade);
 
-    @Query(value = "SELECT * FROM contactbook.subject s inner join \n" +
-            "(select c.class_name, ts.subject_id from class_db c \n" +
-            "inner join teacher_subject ts \n" +
-            "on c.form_teacher = ts.user_code) as cts_tbl\n" +
-            "on cts_tbl.subject_id = s.subject_id\n" +
-            "where cts_tbl.class_name = :classname",
+    @Query(value = "SELECT * FROM contactbook.subject s inner join\n" +
+            "            (select c.class_name, cs.subject_id from class_db c\n" +
+            "            inner join class_subject cs\n" +
+            "            on c.class_id = cs.class_id\n" +
+            "            where c.class_name = :classname) as cts_tbl\n" +
+            "            on cts_tbl.subject_id = s.subject_id;",
             nativeQuery = true)
     List<SubjectEntity> findByClassName(@Param("classname") String className);
 

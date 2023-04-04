@@ -35,5 +35,7 @@ public class ScheduleEntity extends BaseEntity{
     @JoinColumn(name = "subject_id", referencedColumnName = "subject_id")
     private SubjectEntity subject;
 
+    @OneToMany(mappedBy = "attendSchedule")
+    private List<AttendanceEntity> scheduleAttendances;
 
 }

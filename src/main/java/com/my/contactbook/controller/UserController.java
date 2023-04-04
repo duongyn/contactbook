@@ -74,6 +74,11 @@ public class UserController {
         return new ResponseEntity<>(userService.getAll(), HttpStatus.OK);
     }
 
+    @GetMapping("/by-class/{className}")
+    ResponseEntity<List<UserDTO>> getAllActiveUsersByClass(@PathVariable("className") String className) {
+        return new ResponseEntity<>(userService.getUsersByClass(className), HttpStatus.OK);
+    }
+
     @GetMapping("/get/{username}")
     ResponseEntity<UserDTO> getUserByUsername(@PathVariable("username") String username) {
         return new ResponseEntity<>(userService.getUserByUsername(username), HttpStatus.OK);

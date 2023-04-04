@@ -67,6 +67,17 @@ public class ScheduleService {
         return scheduleMapper.toListDto(validList);
     }
 
+    public List<ScheduleDTO> findSchedulesByTeacher(String userCode) {
+        List<ScheduleEntity> list = scheduleRepository.findAll();
+        List<ScheduleEntity> validList = new ArrayList<>();
+        for (ScheduleEntity s : list) {
+            if (!s.isDeleted() && s.getClassId().getFormTeacher().getUserCode().equals(userCode)) {
+                validList.add(s);
+            }
+        }
+        return scheduleMapper.toListDto(validList);
+    }
+
     public List<SubjectDTO> getByClassName(String className){
         return subjectMapper.toListDto(subjectRepository.findByClassName(className));
     }

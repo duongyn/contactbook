@@ -64,4 +64,10 @@ public class ScheduleController {
         List<ScheduleDTO> list = scheduleService.findAllSchedules();
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
+
+    @GetMapping("/teacher/{userCode}")
+    ResponseEntity<List<ScheduleDTO>> findAllSchedulesByTeacher(@PathVariable("userCode") String userCode) {
+        List<ScheduleDTO> list = scheduleService.findSchedulesByTeacher(userCode);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
 }

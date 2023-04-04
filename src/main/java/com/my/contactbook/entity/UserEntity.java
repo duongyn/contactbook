@@ -66,6 +66,9 @@ public class UserEntity extends BaseEntity
     @OneToOne(mappedBy = "formTeacher")
     private ClassEntity formTeacherClass;
 
+    @OneToMany(mappedBy = "attendUser")
+    private List<AttendanceEntity> userAttendances;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 50)
     private EStatus status;
