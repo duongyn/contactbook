@@ -12,15 +12,25 @@ import java.util.List;
 @Setter
 @ToString
 public class MarkDTO {
+
+    private long markId;
     private double markValue;
 
     private String studentCode;
 
     private String teacherCode;
 
-    private long subjectId;
+    private long markSubjectId;
 
-    private String type;
+    private String subjectName;
+
+    private String teacherName;
+
+    private String studentName;
+
+    private String markType;
+
+    private String coefficient;
 
     private String semester;
 }

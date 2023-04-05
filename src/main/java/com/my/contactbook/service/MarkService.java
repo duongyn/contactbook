@@ -40,8 +40,8 @@ public class MarkService {
                 .orElseThrow(() -> new RuntimeException("Not found student with code: " + dto.getStudentCode()));
         entity.setUserId(student);
         entity.setCreatedBy(dto.getTeacherCode());
-        SubjectEntity subject = subjectRepository.findById(dto.getSubjectId())
-                .orElseThrow(() -> new RuntimeException("Not found subject with id: " + dto.getSubjectId()));
+        SubjectEntity subject = subjectRepository.findById(dto.getMarkSubjectId())
+                .orElseThrow(() -> new RuntimeException("Not found subject with id: " + dto.getMarkSubjectId()));
         entity.setSubjectId(subject);
         return markMapper.convertToDto(markRepository.save(entity));
     }

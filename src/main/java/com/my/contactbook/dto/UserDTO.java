@@ -44,4 +44,6 @@ public class UserDTO {
 
     private String address;
 
+    private String studentClass;
+
 }

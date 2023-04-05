@@ -34,6 +34,9 @@ public class UserMapper {
             List<String> roles = new ArrayList<>();
             roles.add(user.getRoles().get(0).getRoleName());
             userDTO.setRoleName(roles);
+            if(user.getStudentClass() != null) {
+                userDTO.setStudentClass(String.valueOf(user.getStudentClass().getClassGrade()));
+            }
 
             return userDTO;
         } catch (Exception ex) {

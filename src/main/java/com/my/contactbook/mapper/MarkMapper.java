@@ -24,10 +24,14 @@ public class MarkMapper {
 
     public MarkDTO convertToDto(MarkEntity entity) {
         try {
+            modelMapper.getConfiguration().setAmbiguityIgnored(true);
             MarkDTO dto = modelMapper.map(entity, MarkDTO.class);
             dto.setStudentCode(entity.getUserId().getUserCode());
             dto.setTeacherCode(entity.getCreatedBy());
-            dto.setSubjectId(entity.getSubjectId().getSubjectId());
+            dto.setTeacherName(entity.getCreatedBy());
+            dto.setStudentName(entity.getUserId().getFirstName()+" "+entity.getUserId().getLastName());
+            dto.setSubjectName(entity.getSubjectId().getSubjectName());
+            dto.setMarkSubjectId(entity.getSubjectId().getSubjectId());
             return dto;
         } catch (Exception ex) {
             logger.warn(ex.getMessage());

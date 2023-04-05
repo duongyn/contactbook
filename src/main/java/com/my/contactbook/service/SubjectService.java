@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.security.auth.Subject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -59,10 +60,10 @@ public class SubjectService {
 
     public void addSubjectToClass(SubjectEntity entity) {
         List<ClassEntity> classes = classRepository.findByClassGrade(Integer.parseInt(entity.getSubjectGrade()));
-        List<SubjectEntity> list = new ArrayList<>();
-        list.add(entity);
         if(!classes.isEmpty()){
             for(ClassEntity classEntity: classes) {
+                List<SubjectEntity> list = subjectRepository.findBySubjectGrade(String.valueOf(classEntity.getClassGrade()));
+                list.stream().filter(e -> !(e.getSubjectName().equals(entity.getSubjectName()) && e.getSubjectGrade().equals(entity.getSubjectGrade()))).collect(Collectors.toList()).add(entity);
                 classEntity.setClassSubjects(list);
                 classRepository.save(classEntity);
             }
