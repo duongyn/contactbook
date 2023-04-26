@@ -5,6 +5,7 @@ import com.my.contactbook.entity.ClassEntity;
 import com.my.contactbook.entity.UserEntity;
 import com.my.contactbook.exception.UserException;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ public class ClassMapper {
 
     public ClassDTO convertToDto(ClassEntity entity) {
         try {
+            modelMapper.getConfiguration().setAmbiguityIgnored(true);
             ClassDTO dto = modelMapper.map(entity, ClassDTO.class);
             List<String> listStudentCode = new ArrayList<>();
             List<String> listStudentName = new ArrayList<>();
@@ -46,6 +48,7 @@ public class ClassMapper {
 
     public ClassEntity convertToEntity(ClassDTO dto) {
         try {
+            modelMapper.getConfiguration().setAmbiguityIgnored(true);
             ClassEntity entity = modelMapper.map(dto, ClassEntity.class);
 
             return entity;

@@ -161,20 +161,28 @@ public class UserService {
         }
         userName += afterStr;
         String lastIndex = "";
-        if (userRepository.findLastUsername(userName) != null) {
-            String lastUsername = userRepository.findLastUsername(userName);
-            char[] chars = lastUsername.toCharArray();
-            for (char c : chars) {
-                if (Character.isDigit(c)) {
-                    String lastNumb = String.valueOf(c);
-                    lastIndex += Integer.parseInt(lastNumb) + 1;
+        String lastNumber = "";
+        try{
+            if (userRepository.findLastUsername(userName) != null) {
+                String lastUsername = userRepository.findLastUsername(userName);
+                char[] chars = lastUsername.toCharArray();
+                for (int i = 0; i < chars.length; i++) {
+                    if (Character.isDigit(chars[i])) {
+                        lastNumber += String.valueOf(chars[i]);
+                    }
+                    if (chars[i] == chars[chars.length - 1] && !Character.isDigit(chars[i])) {
+                        lastIndex += 1;
+                        return userName.toLowerCase() + lastIndex;
+                    }
                 }
-                if (c == chars[chars.length - 1] && !Character.isDigit(c)) {
-                    lastIndex += 1;
-                }
+                lastIndex += Integer.parseInt(lastNumber) + 1;
             }
+            return userName.toLowerCase() + lastIndex;
+        } catch (Exception ex) {
+            throw new RuntimeException(userName.toLowerCase() + lastIndex + userRepository.findLastUsername(userName));
         }
-        return userName.toLowerCase() + lastIndex;
+
+        //return userName.toLowerCase() + lastIndex;
     }
 
     public void deleteUser(String userCode) {

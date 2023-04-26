@@ -55,7 +55,6 @@ public class AttendanceService {
     }
 
     public AttendanceDTO createAttendance(AttendanceDTO dto) {
-        System.out.println(dto);
 
         AttendanceEntity entity = attendaceMapper.convertToEntity(dto);
         entity.setAttended(dto.getIsAttended().equalsIgnoreCase("true"));
