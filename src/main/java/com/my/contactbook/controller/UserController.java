@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -87,5 +88,12 @@ public class UserController {
     @GetMapping("/{id}")
     ResponseEntity<UserDTO> getUserByCode(@PathVariable("id") String userCode) {
         return new ResponseEntity<>(userService.getUserByCode(userCode), HttpStatus.OK);
+    }
+
+    @PostMapping("/add-user-excel")
+        //@PreAuthorize("hasAuthority('ADMIN')")
+    ResponseEntity addUsersExcel(@RequestParam("file") MultipartFile file) {
+        userService.addUserFromExcel(file);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

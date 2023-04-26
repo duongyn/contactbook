@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -69,5 +70,12 @@ public class ScheduleController {
     ResponseEntity<List<ScheduleDTO>> findAllSchedulesByTeacher(@PathVariable("userCode") String userCode) {
         List<ScheduleDTO> list = scheduleService.findSchedulesByTeacher(userCode);
         return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @PostMapping("/add-schedule-excel")
+        //@PreAuthorize("hasAuthority('ADMIN')")
+    ResponseEntity addSchedulesExcel(@RequestParam("file") MultipartFile file) {
+        scheduleService.addScheduleFromExcel(file);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

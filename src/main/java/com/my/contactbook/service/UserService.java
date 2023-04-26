@@ -12,6 +12,7 @@ import com.my.contactbook.repository.ClassRepository;
 import com.my.contactbook.repository.RoleRepository;
 import com.my.contactbook.repository.SubjectRepository;
 import com.my.contactbook.repository.UserRepository;
+import com.my.contactbook.util.ExcelHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -222,6 +225,19 @@ public class UserService {
             throw new UserException(UserException.LIST_NOT_FOUND);
         }
         return userMapper.toListDto(listActive);
+    }
+
+    public void addUserFromExcel(MultipartFile file) {
+        if (ExcelHelper.hasExcelFormat(file)) {
+            try {
+                List<UserDTO> list = ExcelHelper.excelToUsers(file.getInputStream());
+                for (UserDTO user : list) {
+                    createUser(user);
+                }
+            } catch (IOException exception) {
+                throw new RuntimeException("fail to store excel data: " + exception.getMessage());
+            }
+        }
     }
 
 }

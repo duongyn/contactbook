@@ -24,12 +24,18 @@ public class ClassMapper {
         try {
             ClassDTO dto = modelMapper.map(entity, ClassDTO.class);
             List<String> listStudentCode = new ArrayList<>();
+            List<String> listStudentName = new ArrayList<>();
             if(entity.getStudentList() != null){
                 for (UserEntity user : entity.getStudentList()) {
                     listStudentCode.add(user.getUserCode());
                 }
                 dto.setListStudentCode(listStudentCode);
+                for (UserEntity user : entity.getStudentList()) {
+                    listStudentName.add(user.getFirstName()+" "+user.getLastName());
+                }
+                dto.setListStudentName(listStudentName);
             }
+
             return dto;
         } catch (Exception ex) {
             logger.warn(ex.getMessage());

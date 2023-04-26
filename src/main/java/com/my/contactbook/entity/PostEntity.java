@@ -29,4 +29,7 @@ public class PostEntity extends BaseEntity{
     @Column(name = "post_date")
     private LocalDateTime postDate;
 
+    @Column(name = "post_img_url")
+    private String imgUrl;
+
 }

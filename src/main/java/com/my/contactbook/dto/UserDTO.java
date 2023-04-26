@@ -46,4 +46,6 @@ public class UserDTO {
 
     private String studentClass;
 
+    private String phoneNumber;
+
 }

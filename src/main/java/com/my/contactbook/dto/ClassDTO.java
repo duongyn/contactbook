@@ -21,4 +21,6 @@ public class ClassDTO {
     private String formTeacherCode;
 
     private List<String> listStudentCode;
+
+    private List<String> listStudentName;
 }

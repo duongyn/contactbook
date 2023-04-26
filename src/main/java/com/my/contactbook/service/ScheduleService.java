@@ -3,6 +3,7 @@ package com.my.contactbook.service;
 import com.my.contactbook.dto.ScheduleDTO;
 import com.my.contactbook.dto.SlotDTO;
 import com.my.contactbook.dto.SubjectDTO;
+import com.my.contactbook.dto.UserDTO;
 import com.my.contactbook.entity.ClassEntity;
 import com.my.contactbook.entity.ScheduleEntity;
 import com.my.contactbook.entity.SlotEntity;
@@ -11,12 +12,15 @@ import com.my.contactbook.mapper.ScheduleMapper;
 import com.my.contactbook.mapper.SlotMapper;
 import com.my.contactbook.mapper.SubjectMapper;
 import com.my.contactbook.repository.*;
+import com.my.contactbook.util.ExcelHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -71,7 +75,7 @@ public class ScheduleService {
         List<ScheduleEntity> list = scheduleRepository.findAll();
         List<ScheduleEntity> validList = new ArrayList<>();
         for (ScheduleEntity s : list) {
-            if (!s.isDeleted() && s.getClassId().getFormTeacher().getUserCode().equals(userCode)) {
+            if (!s.isDeleted() && s.getClassId().getFormTeacher() != null && s.getClassId().getFormTeacher().getUserCode().equals(userCode)) {
                 validList.add(s);
             }
         }
@@ -80,6 +84,19 @@ public class ScheduleService {
 
     public List<SubjectDTO> getByClassName(String className){
         return subjectMapper.toListDto(subjectRepository.findByClassName(className));
+    }
+
+    public void addScheduleFromExcel(MultipartFile file) {
+        if (ExcelHelper.hasExcelFormat(file)) {
+            try {
+                List<ScheduleDTO> list = ExcelHelper.excelToSchedules(file.getInputStream());
+                for (ScheduleDTO scheduleDTO : list) {
+                    createSchedule(scheduleDTO);
+                }
+            } catch (IOException exception) {
+                throw new RuntimeException("fail to store excel data: " + exception.getMessage());
+            }
+        }
     }
 
     public ScheduleDTO createSchedule(ScheduleDTO dto) {
@@ -98,7 +115,10 @@ public class ScheduleService {
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         schedule.setScheduleTime(LocalDate.parse(dto.getScheduleTime(), df));
         if(scheduleRepository.existsByScheduleTimeAndScheduleSlotAndClassIdAndSubject(schedule.getScheduleTime(), schedule.getScheduleSlot(), schedule.getClassId(),subject)){
-            throw new RuntimeException("Schedule exists in database");
+            throw new RuntimeException("Thời khóa biểu cho "+schedule.getScheduleTime().toString()+" của lớp "+schedule.getClassId().getClassName()+" đã tồn tại");
+        }
+        if(scheduleRepository.existsByScheduleTimeAndScheduleSlotAndClassId(schedule.getScheduleTime(), schedule.getScheduleSlot(), schedule.getClassId())){
+            throw new RuntimeException("Thời khóa biểu cho "+schedule.getScheduleTime().toString()+" của lớp "+schedule.getClassId().getClassName()+" đã tồn tại");
         }
         return scheduleMapper.convertToDto(scheduleRepository.save(schedule));
     }
