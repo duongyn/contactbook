@@ -36,7 +36,7 @@ public class UserMapper {
             roles.add(user.getRoles().get(0).getRoleName());
             userDTO.setRoleName(roles);
             if(user.getStudentClass() != null) {
-                userDTO.setStudentClass(String.valueOf(user.getStudentClass().getClassGrade()));
+                userDTO.setStudentClass(String.valueOf(user.getStudentClass().getClassName()));
             }
 
             return userDTO;

@@ -23,5 +23,8 @@ public class JwtResponse implements Serializable {
         this.jwtToken = jwtToken;
     }
 
-
+    public JwtResponse(String username, List<String> roles, String jwtToken) {
+        super();
+        this.jwtToken = jwtToken;
+    }
 }

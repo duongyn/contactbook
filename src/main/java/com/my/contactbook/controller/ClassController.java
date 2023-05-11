@@ -96,6 +96,13 @@ public class ClassController {
         return new ResponseEntity<>(classDTO, HttpStatus.OK);
     }
 
+    @GetMapping("/find-by/{name}")
+        //@PreAuthorize("hasAuthority('ADMIN')")
+    ResponseEntity<ClassDTO> findClassByName(@PathVariable("name") String name) {
+        ClassDTO classDTO = classService.findClassByName(name);
+        return new ResponseEntity<>(classDTO, HttpStatus.OK);
+    }
+
     @PostMapping("/search")
         //@PreAuthorize("hasAuthority('ADMIN')")
     ResponseEntity<List<ClassDTO>> searchClass(@RequestBody String name) {

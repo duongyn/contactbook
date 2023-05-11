@@ -48,6 +48,10 @@ public class ClassService {
         return classMapper.convertToDto(classRepository.findById(classId).orElseThrow(() -> new RuntimeException("Not found Class.")));
     }
 
+    public ClassDTO findClassByName(String name) {
+        return classMapper.convertToDto(classRepository.findByClassName(name).orElseThrow(() -> new RuntimeException("Not found class")));
+    }
+
     public List<ClassDTO> getAll() {
         List<ClassEntity> list = classRepository.findAll();
         List<ClassEntity> validList = new ArrayList<>();
