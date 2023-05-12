@@ -33,4 +33,6 @@ public class MarkDTO {
     private String coefficient;
 
     private String semester;
+
+    private String feedback;
 }

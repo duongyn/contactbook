@@ -103,6 +103,13 @@ public class ClassController {
         return new ResponseEntity<>(classDTO, HttpStatus.OK);
     }
 
+    @GetMapping("/find-by-teacher/{code}")
+        //@PreAuthorize("hasAuthority('ADMIN')")
+    ResponseEntity<ClassDTO> findClassByTeacher(@PathVariable("code") String teacherCode) {
+        ClassDTO classDTO = classService.getClassByTeacher(teacherCode);
+        return new ResponseEntity<>(classDTO, HttpStatus.OK);
+    }
+
     @PostMapping("/search")
         //@PreAuthorize("hasAuthority('ADMIN')")
     ResponseEntity<List<ClassDTO>> searchClass(@RequestBody String name) {

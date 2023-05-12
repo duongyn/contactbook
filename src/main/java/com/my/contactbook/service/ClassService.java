@@ -277,6 +277,12 @@ public class ClassService {
         return classMapper.toListDto(searchList);
     }
 
+    public ClassDTO getClassByTeacher(String teacherCode) {
+        UserEntity teacher = userRepository.findById(teacherCode).orElseThrow(() -> new RuntimeException("Not found user"));
+        ClassEntity entity = classRepository.findByFormTeacher(teacher).orElseThrow(() -> new RuntimeException("Not found class"));
+        return classMapper.convertToDto(entity);
+    }
+
     public void deleteClass(long classId) {
         ClassEntity classEntity = classRepository.findById(classId).orElseThrow(() -> new RuntimeException("Error: Class is not found."));
         if (!classEntity.isDeleted()) {

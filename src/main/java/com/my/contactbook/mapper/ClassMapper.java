@@ -36,6 +36,7 @@ public class ClassMapper {
                     listStudentName.add(user.getFirstName()+" "+user.getLastName());
                 }
                 dto.setListStudentName(listStudentName);
+                dto.setFormTeacherCode(entity.getFormTeacher().getUserCode());
             }
 
             return dto;

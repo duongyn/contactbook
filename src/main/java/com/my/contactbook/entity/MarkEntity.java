@@ -34,4 +34,7 @@ public class MarkEntity extends BaseEntity{
     @Column(name = "semester", length = 50)
     private String semester;
 
+    @Column(name = "feedback", length = 50)
+    private String feedback;
+
 }
