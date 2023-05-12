@@ -17,4 +17,6 @@ public interface ScheduleRepository extends JpaRepository<ScheduleEntity, Long> 
 
     Boolean existsByScheduleTimeAndScheduleSlotAndClassId(LocalDate scheduleTime, SlotEntity scheduleSlot, ClassEntity classId);
 
+    List<ScheduleEntity> findByClassId(ClassEntity classId);
+
 }

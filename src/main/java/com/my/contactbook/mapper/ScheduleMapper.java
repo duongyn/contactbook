@@ -29,6 +29,8 @@ public class ScheduleMapper {
             dto.setClassName(entity.getClassId().getClassName());
             dto.setSubjectName(entity.getSubject().getSubjectName());
             dto.setSubjectGrade(entity.getSubject().getSubjectGrade());
+            dto.setSlotName(entity.getScheduleSlot().getSlotName());
+            dto.setTeacherName(entity.getClassId().getFormTeacher().getFirstName()+" "+entity.getClassId().getFormTeacher().getLastName());
             return dto;
         } catch (Exception ex) {
             logger.warn(ex.getMessage());

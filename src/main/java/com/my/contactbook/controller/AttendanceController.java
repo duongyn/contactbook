@@ -1,14 +1,10 @@
 package com.my.contactbook.controller;
 
 import com.my.contactbook.dto.AttendanceDTO;
-import com.my.contactbook.dto.ClassDTO;
-import com.my.contactbook.dto.UserDTO;
-import com.my.contactbook.dto.UserEditDTO;
 import com.my.contactbook.service.AttendanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -43,6 +39,18 @@ public class AttendanceController {
     @PostMapping("/check-attend")
     ResponseEntity checkUserAttend(@RequestBody AttendanceDTO dtp) {
         return new ResponseEntity<>(attendanceService.checkUserAttend(dtp.getUserCode(), dtp.getScheduleId()), HttpStatus.OK);
+    }
+
+    @GetMapping("/check-attend/{userCode}/{scheduleId}")
+    ResponseEntity checkUserAttendBasic(@PathVariable("userCode") String userCode, @PathVariable("scheduleId") long scheduleId) {
+        return new ResponseEntity<>(attendanceService.checkUserAttend(userCode, scheduleId), HttpStatus.OK);
+    }
+
+    @GetMapping("/get-by/{userCode}")
+        //@PreAuthorize("hasAuthority('ADMIN')")
+    ResponseEntity<List<AttendanceDTO>> findByUser(@PathVariable("userCode") String userCode) {
+        List<AttendanceDTO> list = attendanceService.findByUser(userCode);
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
 }

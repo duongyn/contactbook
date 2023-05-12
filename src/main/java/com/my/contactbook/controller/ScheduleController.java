@@ -72,6 +72,12 @@ public class ScheduleController {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
+    @GetMapping("/find-by-class/{className}")
+    ResponseEntity<List<ScheduleDTO>> findAllSchedulesByClassName(@PathVariable("className") String className) {
+        List<ScheduleDTO> list = scheduleService.findByClass(className);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
     @PostMapping("/add-schedule-excel")
         //@PreAuthorize("hasAuthority('ADMIN')")
     ResponseEntity addSchedulesExcel(@RequestParam("file") MultipartFile file) {

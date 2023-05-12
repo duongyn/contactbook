@@ -25,4 +25,8 @@ public class ScheduleDTO {
     private String subjectName;
 
     private String subjectGrade;
+
+    private String teacherName;
+
+    private String attendance;
 }

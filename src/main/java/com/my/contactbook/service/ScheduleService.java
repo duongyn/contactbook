@@ -179,4 +179,9 @@ public class ScheduleService {
                 .orElseThrow(() -> new RuntimeException("Not found schedule with id: " + scheduleId));
         return scheduleMapper.convertToDto(schedule);
     }
+
+    public List<ScheduleDTO> findByClass(String className) {
+        ClassEntity classId = classRepository.findByClassName(className).orElseThrow(() -> new RuntimeException("Not found class"));
+        return scheduleMapper.toListDto(scheduleRepository.findByClassId(classId));
+    }
 }
