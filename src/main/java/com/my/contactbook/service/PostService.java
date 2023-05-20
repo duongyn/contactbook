@@ -51,6 +51,7 @@ public class PostService {
         PostEntity entity = postMapper.convertToEntity(dto);
         entity.setDeleted(false);
         entity.setCreatedDate(LocalDateTime.now());
+        entity.setPostDate(LocalDateTime.now());
         return postMapper.convertToDto(postRepository.save(entity));
     }
 

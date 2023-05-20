@@ -20,7 +20,6 @@ public class PostController {
     PostService postService;
 
     @PostMapping("")
-    @PreAuthorize("hasAuthority('ROLE_MANAGER')")
     ResponseEntity<PostDTO> createPost(@Valid @RequestBody PostDTO post) {
         PostDTO dto = postService.createPost(post);
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
