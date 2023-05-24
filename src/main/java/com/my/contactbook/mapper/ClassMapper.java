@@ -22,29 +22,29 @@ public class ClassMapper {
     ModelMapper modelMapper;
 
     public ClassDTO convertToDto(ClassEntity entity) {
-        try {
-            modelMapper.getConfiguration().setAmbiguityIgnored(true);
-            ClassDTO dto = modelMapper.map(entity, ClassDTO.class);
-            List<String> listStudentCode = new ArrayList<>();
-            List<String> listStudentName = new ArrayList<>();
-            if(entity.getStudentList() != null){
-                for (UserEntity user : entity.getStudentList()) {
-                    listStudentCode.add(user.getUserCode());
-                }
-                dto.setListStudentCode(listStudentCode);
-                for (UserEntity user : entity.getStudentList()) {
-                    listStudentName.add(user.getFirstName()+" "+user.getLastName());
-                }
-                dto.setListStudentName(listStudentName);
-                dto.setFormTeacherCode(entity.getFormTeacher().getUserCode());
+//        try {
+//
+//        } catch (Exception ex) {
+//            logger.warn(ex.getMessage());
+//            throw new UserException(UserException.ERR_CONVERT_DTO_ENTITY_FAIL);
+//        }
+        modelMapper.getConfiguration().setAmbiguityIgnored(true);
+        ClassDTO dto = modelMapper.map(entity, ClassDTO.class);
+        List<String> listStudentCode = new ArrayList<>();
+        List<String> listStudentName = new ArrayList<>();
+        if(entity.getStudentList() != null){
+            for (UserEntity user : entity.getStudentList()) {
+                listStudentCode.add(user.getUserCode());
             }
-
-            return dto;
-        } catch (Exception ex) {
-            logger.warn(ex.getMessage());
-            throw new UserException(UserException.ERR_CONVERT_DTO_ENTITY_FAIL);
+            dto.setListStudentCode(listStudentCode);
+            for (UserEntity user : entity.getStudentList()) {
+                listStudentName.add(user.getFirstName()+" "+user.getLastName());
+            }
+            dto.setListStudentName(listStudentName);
+            //dto.setFormTeacherCode(entity.getFormTeacher().getUserCode());
         }
 
+        return dto;
     }
 
     public ClassEntity convertToEntity(ClassDTO dto) {
