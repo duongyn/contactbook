@@ -1,5 +1,6 @@
 package com.my.contactbook.service;
 
+import com.my.contactbook.dto.CheckPasswordDTO;
 import com.my.contactbook.dto.UserDTO;
 import com.my.contactbook.dto.UserEditDTO;
 import com.my.contactbook.entity.ClassEntity;
@@ -28,6 +29,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -246,6 +248,54 @@ public class UserService {
                 throw new RuntimeException("fail to store excel data: " + exception.getMessage());
             }
         }
+    }
+
+    public CheckPasswordDTO checkPassword(CheckPasswordDTO checkPasswordDTO) {
+        try {
+            Optional<UserEntity> existedUser = userRepository.findByUsername(checkPasswordDTO.getUsername());
+            if (!existedUser.isPresent()) {
+                logger.info("User {} not found", checkPasswordDTO.getUsername());
+                throw new UserException(UserException.USER_NOT_FOUND);
+            }
+            UserEntity user = existedUser.get();
+            if (!this.encoder.matches(checkPasswordDTO.getOldPassword(), user.getPassword())) {
+                throw new UserException(UserException.ERR_WRONG_OLD_PASSWORD);
+            }
+        }
+        catch (UserException ex) {
+            throw new UserException(ex.getCodeResponse());
+        }
+
+        return checkPasswordDTO;
+    }
+
+    public boolean updatePassword(CheckPasswordDTO updatePasswordDTO) {
+        boolean result = false;
+        try {
+            Optional<UserEntity> existedUser = userRepository.findByUsername(updatePasswordDTO.getUsername());
+            if (!existedUser.isPresent()) {
+                logger.info("User {} not found", updatePasswordDTO.getUsername());
+                throw new UserException(UserException.USER_NOT_FOUND);
+            }
+            UserEntity user = existedUser.get();
+            if (this.encoder.matches(updatePasswordDTO.getOldPassword(), user.getPassword())) {
+                user.setPassword(encoder.encode(updatePasswordDTO.getNewPassword()));
+                userRepository.save(user);
+                result = true;
+            }
+            else {
+                throw new UserException(UserException.ERR_WRONG_OLD_PASSWORD);
+            }
+        }
+        catch (UserException ex) {
+            throw new UserException(ex.getCodeResponse());
+        }
+        catch (Exception e) {
+            logger.info("Fail to update user {}", updatePasswordDTO.getUsername());
+            throw new UserException(UserException.ERR_UPDATE_USER_FAIL);
+        }
+
+        return result;
     }
 
 }

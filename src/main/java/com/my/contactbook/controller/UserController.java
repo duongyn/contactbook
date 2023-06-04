@@ -1,5 +1,6 @@
 package com.my.contactbook.controller;
 
+import com.my.contactbook.dto.CheckPasswordDTO;
 import com.my.contactbook.dto.UserDTO;
 import com.my.contactbook.dto.UserEditDTO;
 import com.my.contactbook.entity.RoleEntity;
@@ -95,5 +96,17 @@ public class UserController {
     ResponseEntity addUsersExcel(@RequestParam("file") MultipartFile file) {
         userService.addUserFromExcel(file);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/check-password")
+    ResponseEntity<CheckPasswordDTO> getPassword(@RequestBody CheckPasswordDTO checkPasswordDTO) {
+        CheckPasswordDTO result = userService.checkPassword(checkPasswordDTO);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PutMapping("/change-password")
+    ResponseEntity<Boolean> changePassword(@RequestBody CheckPasswordDTO passwordDTO) {
+        boolean result = userService.updatePassword(passwordDTO);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }
