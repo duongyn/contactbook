@@ -16,25 +16,23 @@ public class MarkEntity extends BaseEntity{
     @Column(name = "mark_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long markId;
-
-    @Column(name = "mark_value")
-    private double markValue;
-
+    @Column(name = "half_mark")
+    private double halfMark;
+    @Column(name = "semester_mark")
+    private double semesterMark;
+    @Column(name = "final_mark")
+    private double finalMark;
+    @Column(name = "half_feedback")
+    private String halfFeedback;
+    @Column(name = "semester_feedback")
+    private String semesterFeedback;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity userId;
-
     @ManyToOne
     @JoinColumn(name = "subject_id", nullable = false)
     private SubjectEntity subjectId;
-
-    @Column(name = "mark_type", length = 50)
-    private String markType;
-
     @Column(name = "semester", length = 50)
     private String semester;
-
-    @Column(name = "feedback", length = 50)
-    private String feedback;
 
 }

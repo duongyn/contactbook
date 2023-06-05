@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.List;
-
 @Data
 @Getter
 @Setter
@@ -14,25 +12,17 @@ import java.util.List;
 public class MarkDTO {
 
     private long markId;
-    private double markValue;
-
+    private double halfMark;
+    private double semesterMark;
+    private double finalMark;
+    private String halfFeedback;
+    private String semesterFeedback;
     private String studentCode;
-
     private String teacherCode;
-
     private long markSubjectId;
-
     private String subjectName;
-
     private String teacherName;
-
     private String studentName;
-
-    private String markType;
-
-    private String coefficient;
-
     private String semester;
 
-    private String feedback;
 }

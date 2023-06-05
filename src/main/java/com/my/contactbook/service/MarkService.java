@@ -35,6 +35,7 @@ public class MarkService {
     private MarkMapper markMapper;
 
     public MarkDTO createMark(MarkDTO dto) {
+
         MarkEntity entity = markMapper.convertToEntity(dto);
         UserEntity student = userRepository.findById(dto.getStudentCode())
                 .orElseThrow(() -> new RuntimeException("Not found student with code: " + dto.getStudentCode()));
@@ -43,7 +44,41 @@ public class MarkService {
         SubjectEntity subject = subjectRepository.findById(dto.getMarkSubjectId())
                 .orElseThrow(() -> new RuntimeException("Not found subject with id: " + dto.getMarkSubjectId()));
         entity.setSubjectId(subject);
+        MarkEntity existMark = markRepository.findByUserIdAndSubjectIdAndSemester(student, subject, dto.getSemester()).orElse(null);
+        if(existMark != null) {
+            entity.setMarkId(existMark.getMarkId());
+            if(entity.getHalfMark() == 0 && existMark.getHalfMark() > 0) {
+                entity.setHalfMark(existMark.getHalfMark());
+            }
+            if(entity.getSemesterMark() == 0 && existMark.getSemesterMark() > 0) {
+                entity.setSemesterMark(existMark.getSemesterMark());
+            }
+            if(entity.getHalfFeedback().length() == 0 && existMark.getHalfFeedback().length() > 0){
+                entity.setHalfFeedback(existMark.getHalfFeedback());
+            }
+            if(entity.getSemesterFeedback().length() == 0 && existMark.getSemesterFeedback().length() > 0){
+                entity.setSemesterFeedback(existMark.getSemesterFeedback());
+            }
+        }
         return markMapper.convertToDto(markRepository.save(entity));
+    }
+
+    public MarkDTO editMark(MarkDTO dto) {
+        MarkEntity entity = markRepository.findById(dto.getMarkId()).orElseThrow(() -> new RuntimeException("Error: Không tìm thấy id"));
+
+        entity.setCreatedBy(dto.getTeacherCode());
+        entity.setHalfMark(dto.getHalfMark());
+        entity.setSemesterMark(dto.getSemesterMark());
+        entity.setFinalMark(dto.getFinalMark());
+        entity.setHalfFeedback(dto.getHalfFeedback());
+        entity.setSemesterFeedback(dto.getSemesterFeedback());
+
+        return markMapper.convertToDto(markRepository.save(entity));
+    }
+
+    public MarkDTO findMarkById(long id) {
+        MarkEntity entity = markRepository.findById(id).orElseThrow(() -> new RuntimeException("Error: Không tìm thấy điểm"));
+        return markMapper.convertToDto(entity);
     }
 
     public List<MarkDTO> findMarksByStudent(String studentCode) {

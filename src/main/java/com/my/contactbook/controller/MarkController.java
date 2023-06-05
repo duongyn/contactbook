@@ -26,10 +26,24 @@ public class MarkController {
         return new ResponseEntity<>(markDTO, HttpStatus.CREATED);
     }
 
+    @PutMapping("")
+        //@PreAuthorize("hasAuthority('ADMIN')")
+    ResponseEntity<MarkDTO> updateMark(@Valid @RequestBody MarkDTO dto) {
+        MarkDTO markDTO = markService.editMark(dto);
+        return new ResponseEntity<>(markDTO, HttpStatus.OK);
+    }
+
     @GetMapping("/by-student/{code}")
         //@PreAuthorize("hasAuthority('ADMIN')")
     ResponseEntity<List<MarkDTO>> findMarksByStudent(@PathVariable("code") String studentCode) {
-        List<MarkDTO> classDTO = markService.findMarksByStudent(studentCode);
-        return new ResponseEntity<>(classDTO, HttpStatus.OK);
+        List<MarkDTO> markDTO = markService.findMarksByStudent(studentCode);
+        return new ResponseEntity<>(markDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/{markId}")
+        //@PreAuthorize("hasAuthority('ADMIN')")
+    ResponseEntity<MarkDTO> findMarkById(@PathVariable("markId") long markId) {
+        MarkDTO markDTO = markService.findMarkById(markId);
+        return new ResponseEntity<>(markDTO, HttpStatus.OK);
     }
 }
