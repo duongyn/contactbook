@@ -9,9 +9,8 @@ import java.util.Optional;
 
 public interface AttendanceRepository extends JpaRepository<AttendanceEntity, Long> {
     List<AttendanceEntity> findByAttendUser(UserEntity attendUser);
-    List<AttendanceEntity> findByAttendSchedule(ScheduleEntity attendSchedule);
 
-    Boolean existsByAttendUserAndAttendSchedule(UserEntity attendUser, ScheduleEntity attendSchedule);
+    Boolean existsByAttendUserAndAttendDate(UserEntity attendUser, LocalDate attendDate);
 
-    Optional<AttendanceEntity> findByAttendUserAndAttendSchedule(UserEntity attendUser, ScheduleEntity attendSchedule);
+    Optional<AttendanceEntity> findByAttendUserAndAttendDate(UserEntity attendUser, LocalDate attendDate);
 }

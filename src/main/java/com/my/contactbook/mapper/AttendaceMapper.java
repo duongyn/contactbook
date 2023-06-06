@@ -28,10 +28,8 @@ public class AttendaceMapper {
             dto.setUserCode(entity.getAttendUser().getUserCode());
             dto.setUsername(entity.getAttendUser().getUsername());
             dto.setFullName(entity.getAttendUser().getFirstName()+ " "+entity.getAttendUser().getLastName());
-            dto.setScheduleId(entity.getAttendSchedule().getScheduleId());
-            dto.setScheduleTime(entity.getAttendSchedule().getScheduleTime().toString());
-            dto.setClassName(entity.getAttendSchedule().getClassId().getClassName());
             dto.setIsAttended(String.valueOf(entity.isAttended()));
+            dto.setClassName(entity.getAttendUser().getStudentClass().getClassName());
             return dto;
         } catch (Exception ex) {
             logger.warn(ex.getMessage());

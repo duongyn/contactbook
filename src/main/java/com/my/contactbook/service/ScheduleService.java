@@ -48,9 +48,6 @@ public class ScheduleService {
     @Autowired
     private SubjectRepository subjectRepository;
 
-//    @Autowired
-//    private LessonRepository lessonRepository;
-
     @Autowired
     private ScheduleMapper scheduleMapper;
 
@@ -101,9 +98,6 @@ public class ScheduleService {
 
     public ScheduleDTO createSchedule(ScheduleDTO dto) {
         ScheduleEntity schedule = scheduleMapper.convertToEntity(dto);
-//        LessonEntity lesson = lessonRepository.findById(dto.getLessonId())
-//                .orElseThrow(() -> new RuntimeException("Not found lesson with id: " + dto.getLessonId()));
-//        schedule.setLesson(lesson);
         ClassEntity classEntity = classRepository.findByClassName(dto.getClassName())
                 .orElseThrow(() -> new RuntimeException("Not found class with id: " + dto.getClassName()));
         schedule.setClassId(classEntity);
@@ -114,10 +108,13 @@ public class ScheduleService {
         schedule.setSubject(subject);
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         schedule.setScheduleTime(LocalDate.parse(dto.getScheduleTime(), df));
-        if(scheduleRepository.existsByScheduleTimeAndScheduleSlotAndClassIdAndSubject(schedule.getScheduleTime(), schedule.getScheduleSlot(), schedule.getClassId(),subject)){
-            throw new RuntimeException("Thời khóa biểu cho "+schedule.getScheduleTime().toString()+" của lớp "+schedule.getClassId().getClassName()+" đã tồn tại");
-        }
-        if(scheduleRepository.existsByScheduleTimeAndScheduleSlotAndClassId(schedule.getScheduleTime(), schedule.getScheduleSlot(), schedule.getClassId())){
+//        if(scheduleRepository.existsByScheduleTimeAndScheduleSlotAndClassIdAndSubject(schedule.getScheduleTime(), schedule.getScheduleSlot(), schedule.getClassId(),subject)){
+//            throw new RuntimeException("Thời khóa biểu cho "+schedule.getScheduleTime().toString()+" của lớp "+schedule.getClassId().getClassName()+" đã tồn tại");
+//        }
+//        if(scheduleRepository.existsByScheduleTimeAndScheduleSlotAndClassId(schedule.getScheduleTime(), schedule.getScheduleSlot(), schedule.getClassId())){
+//            throw new RuntimeException("Thời khóa biểu cho "+schedule.getScheduleTime().toString()+" của lớp "+schedule.getClassId().getClassName()+" đã tồn tại");
+//        }
+        if(scheduleRepository.existsByScheduleDayAndScheduleSlotAndClassIdAndScheduleYear(dto.getScheduleDay(), schedule.getScheduleSlot(), schedule.getClassId(), dto.getScheduleYear())){
             throw new RuntimeException("Thời khóa biểu cho "+schedule.getScheduleTime().toString()+" của lớp "+schedule.getClassId().getClassName()+" đã tồn tại");
         }
         return scheduleMapper.convertToDto(scheduleRepository.save(schedule));
@@ -161,8 +158,14 @@ public class ScheduleService {
         schedule.setSubject(subject);
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         schedule.setScheduleTime(LocalDate.parse(dto.getScheduleTime(), df));
-        if(scheduleRepository.existsByScheduleTimeAndScheduleSlotAndClassIdAndSubject(schedule.getScheduleTime(), schedule.getScheduleSlot(), schedule.getClassId(),subject)){
-            throw new RuntimeException("Schedule exists in database");
+//        if(scheduleRepository.existsByScheduleTimeAndScheduleSlotAndClassIdAndSubject(schedule.getScheduleTime(), schedule.getScheduleSlot(), schedule.getClassId(),subject)){
+//            throw new RuntimeException("Schedule exists in database");
+//        }
+//        if(scheduleRepository.existsByScheduleTimeAndScheduleSlotAndClassId(schedule.getScheduleTime(), schedule.getScheduleSlot(), schedule.getClassId())){
+//            throw new RuntimeException("Thời khóa biểu cho "+schedule.getScheduleTime().toString()+" của lớp "+schedule.getClassId().getClassName()+" đã tồn tại");
+//        }
+        if(scheduleRepository.existsByScheduleDayAndScheduleSlotAndClassIdAndScheduleYear(dto.getScheduleDay(), schedule.getScheduleSlot(), schedule.getClassId(), dto.getScheduleYear())){
+            throw new RuntimeException("Thời khóa biểu cho "+schedule.getScheduleTime().toString()+" của lớp "+schedule.getClassId().getClassName()+" đã tồn tại");
         }
         return scheduleMapper.convertToDto(scheduleRepository.save(schedule));
     }

@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "attendance_db")
@@ -22,9 +23,11 @@ public class AttendanceEntity extends BaseEntity{
     @JoinColumn(name = "user_code", referencedColumnName = "user_code")
     private UserEntity attendUser;
 
-    @ManyToOne
-    @JoinColumn(name = "schedule_id", referencedColumnName = "schedule_id")
-    private ScheduleEntity attendSchedule;
+    @Column(name = "attend_date")
+    private LocalDate attendDate;
+
+    @Column(name = "attend_year")
+    private String attendYear;
 
     @Column
     private boolean isAttended;

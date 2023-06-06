@@ -184,7 +184,7 @@ public class ExcelHelper {
                             }
                             break;
                         case 4:
-                            scheduleDTO.setScheduleTime(currentCell.getStringCellValue());
+                            scheduleDTO.setScheduleDay(currentCell.getStringCellValue());
                             break;
                         default:
                             break;

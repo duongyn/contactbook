@@ -16,6 +16,10 @@ public class ScheduleDTO {
 
     private String slotName;
 
+    private String scheduleYear;
+
+    private String scheduleDay;
+
     private String scheduleFrom;
 
     private String scheduleTo;
@@ -28,5 +32,4 @@ public class ScheduleDTO {
 
     private String teacherName;
 
-    private String attendance;
 }

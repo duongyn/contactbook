@@ -4,6 +4,7 @@ import com.my.contactbook.dto.ScheduleDTO;
 import com.my.contactbook.dto.SlotDTO;
 import com.my.contactbook.dto.SubjectDTO;
 import com.my.contactbook.service.ScheduleService;
+import com.my.contactbook.service.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,9 @@ public class ScheduleController {
     @Autowired
     ScheduleService scheduleService;
 
+    @Autowired
+    SubjectService subjectService;
+
     @GetMapping("/all-slots")
     ResponseEntity<List<SlotDTO>> findAllSlot() {
         List<SlotDTO> list = scheduleService.getAllSlots();
@@ -28,6 +32,10 @@ public class ScheduleController {
 
     @GetMapping("/get-subjects/{className}")
     ResponseEntity<List<SubjectDTO>> findSubjectsByClassName(@PathVariable("className") String className) {
+        if(className == null) {
+            List<SubjectDTO> list = subjectService.getAll();
+            return new ResponseEntity<>(list, HttpStatus.OK);
+        }
         List<SubjectDTO> list = scheduleService.getByClassName(className);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }

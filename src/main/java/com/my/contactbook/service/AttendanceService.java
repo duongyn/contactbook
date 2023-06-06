@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -48,21 +50,25 @@ public class AttendanceService {
         return !list.isEmpty() ? attendaceMapper.toListDto(list) : null;
     }
 
-    public List<AttendanceDTO> findBySchedule(long scheduleId){
-        ScheduleEntity schedule = scheduleRepository.findById(scheduleId).orElseThrow(() -> new RuntimeException("Not found schedule "+scheduleId));
-        List<AttendanceEntity> list = attendanceRepository.findByAttendSchedule(schedule);
-        return !list.isEmpty() ? attendaceMapper.toListDto(list) : null;
+    public AttendanceDTO findByUserAndDate(String userCode, String date) {
+        UserEntity user = userRepository.findById(userCode).orElseThrow(() -> new RuntimeException("Not found user "+userCode));
+        LocalDate attendDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        AttendanceEntity entity = attendanceRepository.findByAttendUserAndAttendDate(user, attendDate).orElseThrow(() -> new RuntimeException("Not found"));
+        return attendaceMapper.convertToDto(entity);
     }
 
     public AttendanceDTO createAttendance(AttendanceDTO dto) {
-
         AttendanceEntity entity = attendaceMapper.convertToEntity(dto);
         entity.setAttended(dto.getIsAttended().equalsIgnoreCase("true"));
         UserEntity student = userRepository.findById(dto.getUserCode()).orElseThrow(() -> new RuntimeException("Not found user "+dto.getUserCode()));
         entity.setAttendUser(student);
-        ScheduleEntity schedule = scheduleRepository.findById(dto.getScheduleId()).orElseThrow(() -> new RuntimeException("Not found schedule"));
-        entity.setAttendSchedule(schedule);
-        if(!attendanceRepository.existsByAttendUserAndAttendSchedule(entity.getAttendUser(), entity.getAttendSchedule())){
+        if(student.getStudentClass() == null) {
+            throw new RuntimeException("Học sinh chưa có lớp! Không thể điểm danh");
+        }
+        LocalDate date = LocalDate.parse(dto.getAttendDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        entity.setAttendDate(date);
+
+        if(!attendanceRepository.existsByAttendUserAndAttendDate(entity.getAttendUser(), entity.getAttendDate())){
             AttendanceEntity created = attendanceRepository.save(entity);
             return attendaceMapper.convertToDto(created);
         }
@@ -71,10 +77,10 @@ public class AttendanceService {
         }
     }
 
-    public boolean checkUserAttend(String userCode, long scheduleId) {
+    public boolean checkUserAttend(String userCode, String attendDate) {
         UserEntity student = userRepository.findById(userCode).orElseThrow(() -> new RuntimeException("Not found user "+userCode));
-        ScheduleEntity schedule = scheduleRepository.findById(scheduleId).orElseThrow(() -> new RuntimeException("Not found schedule"));
-        AttendanceEntity entity = attendanceRepository.findByAttendUserAndAttendSchedule(student, schedule)
+        LocalDate date = LocalDate.parse(attendDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        AttendanceEntity entity = attendanceRepository.findByAttendUserAndAttendDate(student, date)
                 .orElseThrow(() -> new RuntimeException("Not found attendance object"));
         return entity.isAttended();
     }
@@ -82,12 +88,11 @@ public class AttendanceService {
     public AttendanceDTO updateAttendance(AttendanceDTO dto) {
 
         UserEntity student = userRepository.findById(dto.getUserCode()).orElseThrow(() -> new RuntimeException("Not found user "+dto.getUserCode()));
-        ScheduleEntity schedule = scheduleRepository.findById(dto.getScheduleId()).orElseThrow(() -> new RuntimeException("Not found schedule"));
-        AttendanceEntity entity = attendanceRepository.findByAttendUserAndAttendSchedule(student, schedule)
+        LocalDate date = LocalDate.parse(dto.getAttendDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        AttendanceEntity entity = attendanceRepository.findByAttendUserAndAttendDate(student, date)
                 .orElseThrow(() -> new RuntimeException("Not found attendance object"));
         entity.setAttended(dto.getIsAttended().equalsIgnoreCase("true"));
         entity.setAttendUser(student);
-        entity.setAttendSchedule(schedule);
         AttendanceEntity updated = attendanceRepository.save(entity);
         return attendaceMapper.convertToDto(updated);
 

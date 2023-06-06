@@ -23,6 +23,12 @@ public class ScheduleEntity extends BaseEntity{
     @Column(name = "schedule_time")
     private LocalDate scheduleTime;
 
+    @Column(name = "schedule_year")
+    private String scheduleYear;
+
+    @Column(name = "schedule_day")
+    private String scheduleDay;
+
     @ManyToOne
     @JoinColumn(name = "schedule_slot")
     private SlotEntity scheduleSlot;
@@ -34,8 +40,5 @@ public class ScheduleEntity extends BaseEntity{
     @ManyToOne
     @JoinColumn(name = "subject_id", referencedColumnName = "subject_id")
     private SubjectEntity subject;
-
-    @OneToMany(mappedBy = "attendSchedule")
-    private List<AttendanceEntity> scheduleAttendances;
 
 }

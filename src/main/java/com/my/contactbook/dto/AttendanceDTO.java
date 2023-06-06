@@ -15,13 +15,13 @@ public class AttendanceDTO {
 
     private String userCode;
 
+    private String attendDate;
+
+    private String attendYear;
+
     private String username;
 
     private String fullName;
-
-    private long scheduleId;
-
-    private String scheduleTime;
 
     private String className;
 

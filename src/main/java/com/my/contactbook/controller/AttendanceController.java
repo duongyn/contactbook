@@ -36,14 +36,21 @@ public class AttendanceController {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    @PostMapping("/check-attend")
-    ResponseEntity checkUserAttend(@RequestBody AttendanceDTO dtp) {
-        return new ResponseEntity<>(attendanceService.checkUserAttend(dtp.getUserCode(), dtp.getScheduleId()), HttpStatus.OK);
+    @GetMapping("/by-user-date/{userCode}/{date}")
+        //@PreAuthorize("hasAuthority('ADMIN')")
+    ResponseEntity<AttendanceDTO> findByUserAndDate(@PathVariable("userCode") String userCode, @PathVariable("date") String date) {
+        AttendanceDTO dto = attendanceService.findByUserAndDate(userCode, date);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-    @GetMapping("/check-attend/{userCode}/{scheduleId}")
-    ResponseEntity checkUserAttendBasic(@PathVariable("userCode") String userCode, @PathVariable("scheduleId") long scheduleId) {
-        return new ResponseEntity<>(attendanceService.checkUserAttend(userCode, scheduleId), HttpStatus.OK);
+    @PostMapping("/check-attend")
+    ResponseEntity checkUserAttend(@RequestBody AttendanceDTO dtp) {
+        return new ResponseEntity<>(attendanceService.checkUserAttend(dtp.getUserCode(), dtp.getAttendDate()), HttpStatus.OK);
+    }
+
+    @GetMapping("/check-attend/{userCode}/{date}")
+    ResponseEntity checkUserAttendBasic(@PathVariable("userCode") String userCode, @PathVariable("date") String date) {
+        return new ResponseEntity<>(attendanceService.checkUserAttend(userCode, date), HttpStatus.OK);
     }
 
     @GetMapping("/get-by/{userCode}")
