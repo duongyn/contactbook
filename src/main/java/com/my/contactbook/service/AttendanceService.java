@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -55,6 +56,17 @@ public class AttendanceService {
         LocalDate attendDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         AttendanceEntity entity = attendanceRepository.findByAttendUserAndAttendDate(user, attendDate).orElseThrow(() -> new RuntimeException("Not found"));
         return attendaceMapper.convertToDto(entity);
+    }
+
+    public List<AttendanceDTO> findByClassAndDate(String className, String date) {
+        List<AttendanceEntity> list = attendanceRepository.findAll();
+        LocalDate attendDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        List<AttendanceEntity> filterList = list.stream()
+                .filter(el -> (
+                    el.getAttendUser().getStudentClass().getClassName().equalsIgnoreCase(className)
+                        && el.getAttendDate().isEqual(attendDate)
+                )).collect(Collectors.toList());
+        return attendaceMapper.toListDto(filterList);
     }
 
     public AttendanceDTO createAttendance(AttendanceDTO dto) {

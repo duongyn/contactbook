@@ -43,6 +43,13 @@ public class AttendanceController {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
+    @GetMapping("/by-class-date/{className}/{date}")
+        //@PreAuthorize("hasAuthority('ADMIN')")
+    ResponseEntity<List<AttendanceDTO>> findByClassAndDate(@PathVariable("className") String className, @PathVariable("date") String date) {
+        List<AttendanceDTO> dto = attendanceService.findByClassAndDate(className, date);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
     @PostMapping("/check-attend")
     ResponseEntity checkUserAttend(@RequestBody AttendanceDTO dtp) {
         return new ResponseEntity<>(attendanceService.checkUserAttend(dtp.getUserCode(), dtp.getAttendDate()), HttpStatus.OK);
